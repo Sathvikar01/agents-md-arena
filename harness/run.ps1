@@ -40,7 +40,13 @@ You are working in this repository. Under the tasks/ directory there are multipl
 '@
 
 $env:XDG_CONFIG_HOME = $cfg
-$opencodeExe = (Get-Command opencode).Source
+$cmd = Get-Command opencode.cmd -ErrorAction SilentlyContinue
+if (-not $cmd) {
+    $cmd = Get-Command opencode -CommandType Application -ErrorAction SilentlyContinue |
+        Where-Object { $_.Source -match '\.(exe|cmd|bat)$' } | Select-Object -First 1
+}
+if (-not $cmd) { throw "opencode executable not found on PATH" }
+$opencodeExe = $cmd.Source
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 Write-Host "[$Variant] starting opencode ($Model), budget ${BudgetMin}min..."
 $proc = Start-Process -FilePath $opencodeExe `
