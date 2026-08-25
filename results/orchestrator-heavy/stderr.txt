@@ -1,0 +1,194 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m✱ [0mGlob "tasks/**/*.py"[90m 47 matches[0m
+[0m
+[0m$ [0mGet-ChildItem -Directory tasks | Select-Object Name
+Name               
+----               
+c01-inventory      
+c02-event-pipeline 
+c03-json-router    
+m01-csv-stats      
+m02-ini-parser     
+m03-todo-store     
+m04-template-engine
+m05-dijkstra       
+t01-slugify        
+t02-fizzbuzz       
+t03-paren-balance  
+t04-rle            
+t05-flatten        
+t06-word-count     
+t07-primes         
+t08-business-days  
+t09-caesar         
+t10-anagram-groups 
+t11-transpose      
+t12-lru-cache
+[0m
+[0m$ [0mpython -m pytest tasks -q 2>&1 | Select-Object -Last 15
+FAILED tasks/t09-caesar/test_caesar.py::test_preserves_case - AssertionError:...
+FAILED tasks/t09-caesar/test_caesar.py::test_nonletters_unchanged - Assertion...
+FAILED tasks/t09-caesar/test_caesar.py::test_negative_shift - AssertionError:...
+FAILED tasks/t09-caesar/test_caesar.py::test_shift_by_26_identity - Assertion...
+FAILED tasks/t09-caesar/test_caesar.py::test_large_shift - AssertionError: as...
+FAILED tasks/t10-anagram-groups/test_anagram_groups.py::test_letter_multiplicity_matters
+FAILED tasks/t11-transpose/test_transpose.py::test_square - assert [[1, 2], [...
+FAILED tasks/t11-transpose/test_transpose.py::test_rectangular_tall_to_wide
+FAILED tasks/t11-transpose/test_transpose.py::test_rectangular_wide_to_tall
+FAILED tasks/t11-transpose/test_transpose.py::test_single_row - IndexError: l...
+FAILED tasks/t11-transpose/test_transpose.py::test_single_column - IndexError...
+FAILED tasks/t11-transpose/test_transpose.py::test_double_transpose_identity
+FAILED tasks/t12-lru-cache/test_lru_cache.py::test_get_refreshes_recency - As...
+FAILED tasks/t12-lru-cache/test_lru_cache.py::test_update_existing_keeps_key
+67 failed, 107 passed in 2.45s
+[0m
+[0m$ [0mpython -m pytest tasks -q 2>&1 | Select-String "FAILED" | ForEach-Object { ($_ -split "/")[1] } | Sort-Object -Unique
+c01-inventory
+c02-event-pipeline
+c03-json-router
+m01-csv-stats
+m02-ini-parser
+m03-todo-store
+m04-template-engine
+m05-dijkstra
+t01-slugify
+t02-fizzbuzz
+t03-paren-balance
+t04-rle
+t05-flatten
+t06-word-count
+t07-primes
+t08-business-days
+t09-caesar
+t10-anagram-groups
+t11-transpose
+t12-lru-cache
+[0m
+[0m• [0mFix t01-slugify task[90m General Agent[0m
+[0m• [0mFix t02-fizzbuzz task[90m General Agent[0m
+[0m• [0mFix t03-paren-balance task[90m General Agent[0m
+[0m• [0mFix t04-rle task[90m General Agent[0m
+[0m• [0mFix t05-flatten task[90m General Agent[0m
+[0m• [0mFix t06-word-count task[90m General Agent[0m
+[0m• [0mFix t07-primes task[90m General Agent[0m
+[0m• [0mFix t08-business-days task[90m General Agent[0m
+[0m• [0mFix t09-caesar task[90m General Agent[0m
+[0m• [0mFix t10-anagram-groups task[90m General Agent[0m
+[0m• [0mFix t11-transpose task[90m General Agent[0m
+[0m• [0mFix t12-lru-cache task[90m General Agent[0m
+[0m✓ [0mFix t02-fizzbuzz task[90m General Agent[0m
+[0m✓ [0mFix t01-slugify task[90m General Agent[0m
+[0m✓ [0mFix t03-paren-balance task[90m General Agent[0m
+[0m✓ [0mFix t05-flatten task[90m General Agent[0m
+[0m✓ [0mFix t06-word-count task[90m General Agent[0m
+[0m✓ [0mFix t09-caesar task[90m General Agent[0m
+[0m✓ [0mFix t07-primes task[90m General Agent[0m
+[0m✓ [0mFix t11-transpose task[90m General Agent[0m
+[0m✓ [0mFix t10-anagram-groups task[90m General Agent[0m
+[0m✓ [0mFix t08-business-days task[90m General Agent[0m
+[0m✓ [0mFix t12-lru-cache task[90m General Agent[0m
+[0m✓ [0mFix t04-rle task[90m General Agent[0m
+[0m• [0mFix m01-csv-stats task[90m General Agent[0m
+[0m• [0mFix m02-ini-parser task[90m General Agent[0m
+[0m• [0mFix m03-todo-store task[90m General Agent[0m
+[0m✓ [0mFix m01-csv-stats task[90m General Agent[0m
+[0m• [0mFix m04-template-engine task[90m General Agent[0m
+[0m✓ [0mFix m03-todo-store task[90m General Agent[0m
+[0m• [0mFix m05-dijkstra task[90m General Agent[0m
+[0m✓ [0mFix m02-ini-parser task[90m General Agent[0m
+[0m• [0mFix c01-inventory task[90m General Agent[0m
+[0m✓ [0mFix m04-template-engine task[90m General Agent[0m
+[0m• [0mFix c02-event-pipeline task[90m General Agent[0m
+[0m• [0mFix c03-json-router task[90m General Agent[0m
+[0m✓ [0mFix m05-dijkstra task[90m General Agent[0m
+[0m✓ [0mFix c02-event-pipeline task[90m General Agent[0m
+[0m✓ [0mFix c01-inventory task[90m General Agent[0m
+[0m✓ [0mFix c03-json-router task[90m General Agent[0m
+[0m
+[0m$ [0mgit status --porcelain; Write-Output "---"; git diff --stat
+?? results/orchestrator-heavy/
+---
+[0m
+[0m$ [0mpython -m pytest tasks -q 2>&1 | Select-Object -Last 5
+warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+..............................                                           [100%]
+174 passed in 0.99s
+[0m
+[0m$ [0mgit ls-files tasks | Measure-Object | Select-Object Count; git check-ignore tasks/t01-slugify/test_slugify.py; Write-Output "ignored-check-done"
+tasks/t01-slugify/test_slugify.py
+Count
+-----
+    0
+ignored-check-done
+[0m
+[0m$ [0mgit status --porcelain --untracked-files=all | Select-String "tasks" | Measure-Object | Select-Object Count; Get-Content .gitignore -ErrorAction SilentlyContinue
+Count
+-----
+    0
+[0m
+[0m$ [0mgit rev-parse --show-toplevel; Get-ChildItem -Recurse -File tasks -Filter *.py | Sort-Object LastWriteTime -Descending | Select-Object -First 30 @{n='mtime';e={$_.LastWriteTime}}, @{n='path';e={$_.FullName.Substring((Get-Location).Path.Length+1)}}
+C:/Users/arsat/OneDrive/Desktop/agents-md-arena
+
+mtime               path                                             
+-----               ----                                             
+26-08-2026 02:00:13 tasks\c03-json-router\app.py                     
+26-08-2026 02:00:12 tasks\c01-inventory\store.py                     
+26-08-2026 02:00:11 tasks\c03-json-router\matcher.py                 
+26-08-2026 02:00:10 tasks\c01-inventory\pricing.py                   
+26-08-2026 01:59:59 tasks\c02-event-pipeline\buckets.py              
+26-08-2026 01:59:58 tasks\c02-event-pipeline\window.py               
+26-08-2026 01:59:27 tasks\m05-dijkstra\dijkstra.py                   
+26-08-2026 01:59:14 tasks\m04-template-engine\template_engine.py     
+26-08-2026 01:58:46 tasks\m02-ini-parser\ini_parser.py               
+26-08-2026 01:58:42 tasks\m03-todo-store\todo_store.py               
+26-08-2026 01:58:25 tasks\m01-csv-stats\csv_stats.py                 
+26-08-2026 01:57:10 tasks\t04-rle\rle.py                             
+26-08-2026 01:57:06 tasks\t12-lru-cache\lru_cache.py                 
+26-08-2026 01:57:03 tasks\t10-anagram-groups\anagram_groups.py       
+26-08-2026 01:56:59 tasks\t11-transpose\transpose.py                 
+26-08-2026 01:56:53 tasks\t08-business-days\business_days.py         
+26-08-2026 01:56:51 tasks\t07-primes\primes.py                       
+26-08-2026 01:56:47 tasks\t09-caesar\caesar.py                       
+26-08-2026 01:56:33 tasks\t06-word-count\word_count.py               
+26-08-2026 01:56:23 tasks\t05-flatten\flatten.py                     
+26-08-2026 01:56:17 tasks\t03-paren-balance\paren_balance.py         
+26-08-2026 01:56:16 tasks\t01-slugify\slugify.py                     
+26-08-2026 01:56:12 tasks\t02-fizzbuzz\fizzbuzz.py                   
+26-08-2026 00:42:12 tasks\t07-primes\test_primes.py                  
+26-08-2026 00:42:12 tasks\m01-csv-stats\test_csv_stats.py            
+26-08-2026 00:42:12 tasks\t08-business-days\test_business_days.py    
+26-08-2026 00:42:12 tasks\m02-ini-parser\test_ini_parser.py          
+26-08-2026 00:36:38 tasks\t02-fizzbuzz\test_fizzbuzz.py              
+26-08-2026 00:36:38 tasks\t05-flatten\test_flatten.py                
+26-08-2026 00:36:38 tasks\m04-template-engine\test_template_engine.py
+[0m
+[0m$ [0mGet-ChildItem -Recurse -File tasks -Filter *.py | Where-Object { $_.Name -notlike "test_*" } | ForEach-Object { Select-String -Path $_.FullName -Pattern '^\s*(import|from)\s+' } | ForEach-Object { "$($_.Filename): $($_.Line.Trim())" }
+models.py: from dataclasses import dataclass
+pricing.py: from models import OrderLine
+store.py: from collections import defaultdict
+events.py: from dataclasses import dataclass, field
+pipeline.py: from window import filter_by_window
+pipeline.py: from buckets import count_per_bucket
+window.py: from events import Event
+app.py: from registry import Registry
+matcher.py: import re
+registry.py: from matcher import match
+csv_stats.py: import io
+csv_stats.py: from csv import DictReader
+ini_parser.py: from collections import defaultdict
+todo_store.py: from collections import defaultdict
+template_engine.py: import re
+dijkstra.py: import heapq
+slugify.py: import re
+word_count.py: import re
+word_count.py: from collections import Counter
+business_days.py: from datetime import date, timedelta
+lru_cache.py: from collections import OrderedDict
+[0m
+[0m$ [0mpython -m pytest tasks -q 2>&1 | Select-Object -Last 1
+174 passed in 0.56s
+[0m

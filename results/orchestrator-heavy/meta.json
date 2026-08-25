@@ -1,0 +1,10 @@
+﻿{
+    "exit_code":  null,
+    "model":  "opencode-go/ox-alpha-free",
+    "timed_out":  false,
+    "variant":  "orchestrator-heavy",
+    "repo_sha":  "2db9afbeeb7f516e5740b6b7666ee981d681bb8b",
+    "seconds":  435.1,
+    "budget_min":  25,
+    "transcript_bytes":  3088
+}

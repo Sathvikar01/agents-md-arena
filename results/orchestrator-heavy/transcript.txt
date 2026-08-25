@@ -1,0 +1,32 @@
+20 independent task folders. Let me establish a baseline first.
+Baseline: **67 failed, 107 passed** — all 20 folders have failures. All tasks are independent (separate folders), so I'll dispatch parallel implementer agents with strict file boundaries. First wave: the 12 trivial-tier tasks.
+Wave 1 complete — all 12 report green. Now dispatching wave 2: the 5 medium and 3 complex-tier tasks in parallel.
+All 20 agents report green. Per protocol, I don't trust agent reports — verifying myself now: full suite + integrity checks (no test files touched, stdlib only).
+Full suite passes (174/174). But git shows no tracked changes — let me confirm the test files' integrity directly since they may be untracked.
+Integrity confirmed via mtimes: only implementation modules were modified (01:56–02:00); every test file retains its original timestamp (≤00:42) — untouched. Final compliance sweep: stdlib-only and signature sanity across all implementations.
+All imports are standard library (`re`, `collections`, `csv`, `heapq`, `datetime`, `dataclasses`, `io`) or intra-task modules. Final acceptance run for the record:
+All 20 tasks fixed and verified. Final result: **174 passed, 0 failed** (baseline was 67 failed / 107 passed).
+
+**How it ran:** 20 parallel implementer agents (strict one-folder file boundaries), then primary verification: full suite re-run, test-file integrity via mtimes (all `test_*.py` untouched — only implementation modules modified), and a stdlib-only import audit.
+
+Fixes per task:
+- **t01 slugify**: strip leading/trailing hyphens
+- **t02 fizzbuzz**: check `% 15` before `% 3`/`% 5`
+- **t03 paren-balance**: return `not stack` instead of always `True`
+- **t04 rle**: flush final run in encode; decode read count after emitting — rewrote state machine
+- **t05 flatten**: recurse into nested lists instead of single-level `extend`
+- **t06 word-count**: tie-break alphabetically (`(-count, word)` key)
+- **t07 primes**: `i*i <= m` (square-root boundary excluded prime squares)
+- **t08 business-days**: Sat counted as workday (`< 6` → `< 5`)
+- **t09 caesar**: uppercase lacked mod-26 wraparound
+- **t10 anagram-groups**: `frozenset(w)` key dropped multiplicity → `tuple(sorted(w))`
+- **t11 transpose**: swapped row/col loop variables
+- **t12 lru-cache**: `get`/`put` didn't refresh recency → `move_to_end`
+- **m01 csv-stats**: skip blank cells; raise on all-blank column
+- **m02 ini-parser**: strip inline ` ;`/` #` comments
+- **m03 todo-store**: `complete()` set `done=False`; pending sort was reversed
+- **m04 template-engine**: greedy regex, untrimmed names, escaping of unmatched placeholders
+- **m05 dijkstra**: no distance accumulation; wrong unreachable return (`inf` vs `None`); stale heap entries
+- **c01 inventory**: discount tier off-by-one (49→50); reserve checked on-hand instead of available
+- **c02 event-pipeline**: window end inclusive instead of `[start, end)`; bucket misalignment (`round` → floor)
+- **c03 json-router**: param regex spanned `/` and matched empty segments; middleware executed in reverse order
