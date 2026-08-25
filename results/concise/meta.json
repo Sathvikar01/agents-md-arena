@@ -1,0 +1,10 @@
+﻿{
+    "exit_code":  null,
+    "model":  "opencode-go/ox-alpha-free",
+    "timed_out":  false,
+    "variant":  "concise",
+    "repo_sha":  "b8f61c8ef75e71c5b8df1a3bc0d31e88a341cea9",
+    "seconds":  408.4,
+    "budget_min":  25,
+    "transcript_bytes":  1568
+}

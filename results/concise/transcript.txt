@@ -1,0 +1,25 @@
+t04 has deeper bugs in both functions. Rewriting them:
+All m-tasks pass. Now the c-tasks:
+All 18 task folders fixed — **174 passed, 0 failed** (`python -m pytest tasks -q`). No test files touched; only implementation modules changed, stdlib-only, signatures unchanged.
+
+Fixes per task:
+- **t01**: strip leading/trailing hyphens
+- **t02**: check `% 15` before `% 3`/`% 5`
+- **t03**: return `not stack` (unbalanced leftovers)
+- **t04**: rewrote `encode` (final run was lost/wrong char) and `decode` (flush-on-letter was inverted)
+- **t05**: recurse into nested lists
+- **t06**: tie-break by `(-count, word)`
+- **t07**: `i * i <= m` (perfect squares were "prime")
+- **t08**: Mon–Fri is `weekday() < 5`
+- **t09**: uppercase branch missing mod-26 wraparound
+- **t10**: anagram key `tuple(sorted(w))` not `frozenset` (multiplicity)
+- **t11**: transposed indices swapped
+- **t12**: `move_to_end` on both get and put for LRU recency
+- **m01**: skip blank cells, raise ValueError when no values remain
+- **m02**: strip inline `" ;"`/`" #"` comments before parsing
+- **m03**: complete set `done=True`; pending sorted by `(priority, id)` ascending
+- **m04**: non-greedy regex + trim names; unknown placeholders untouched and never escaped
+- **m05**: accumulate distance `d + w`, skip stale heap entries, return `(None, [])` when unreachable
+- **c01**: discount tier at `qty >= 50`; reserve checks *available* stock
+- **c02**: end-exclusive window; bucket = `(ts // 60) * 60`
+- **c03**: params capture one non-empty segment (`[^/]+`); middleware runs in registration order
