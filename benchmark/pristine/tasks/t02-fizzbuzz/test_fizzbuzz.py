@@ -1,4 +1,4 @@
-from impl import fizzbuzz
+﻿from fizzbuzz import fizzbuzz
 
 
 def test_length():

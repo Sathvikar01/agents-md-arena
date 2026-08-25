@@ -1,5 +1,5 @@
-import pytest
-from impl import is_prime, nth_prime
+﻿import pytest
+from primes import is_prime, nth_prime
 
 
 @pytest.mark.parametrize(

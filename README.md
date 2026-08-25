@@ -32,3 +32,7 @@ leaderboard.md              final comparison
 ```
 
 Model for all runs: `opencode-go/ox-alpha-free` · 25-minute budget per variant.
+
+Suite stats: **20 tasks · 174 tests**. Doing nothing scores **61.5%** (pre-passing
+tests); perfect play scores 100%. Test files are hash-checked after every run —
+any modification zeroes that task.

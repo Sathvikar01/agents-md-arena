@@ -1,4 +1,4 @@
-from impl import encode, decode
+﻿from rle import encode, decode
 
 
 def test_encode_basic():

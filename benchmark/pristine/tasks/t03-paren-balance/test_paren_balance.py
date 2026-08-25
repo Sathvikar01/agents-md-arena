@@ -1,4 +1,4 @@
-from impl import is_balanced
+﻿from paren_balance import is_balanced
 
 
 def test_simple_pairs():

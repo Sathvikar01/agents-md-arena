@@ -1,4 +1,4 @@
-from impl import flatten
+﻿from flatten import flatten
 
 
 def test_shallow():

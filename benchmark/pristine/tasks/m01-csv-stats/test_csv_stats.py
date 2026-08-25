@@ -1,5 +1,5 @@
-import pytest
-from impl import parse_csv, column_stats
+﻿import pytest
+from csv_stats import parse_csv, column_stats
 
 CSV = "name,score\nann,10\nbob,\ncat,7\n"
 

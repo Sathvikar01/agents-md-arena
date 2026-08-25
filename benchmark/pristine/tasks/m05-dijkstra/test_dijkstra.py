@@ -1,4 +1,4 @@
-from impl import shortest_path
+﻿from dijkstra import shortest_path
 
 G = {
     "a": [("b", 1), ("c", 4)],

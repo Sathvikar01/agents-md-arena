@@ -1,4 +1,4 @@
-from impl import slugify
+﻿from slugify import slugify
 
 
 def test_basic():

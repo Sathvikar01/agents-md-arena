@@ -1,4 +1,4 @@
-from impl import LRUCache
+﻿from lru_cache import LRUCache
 
 
 def test_put_and_get():

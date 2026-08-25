@@ -1,5 +1,5 @@
-import pytest
-from impl import parse_ini
+﻿import pytest
+from ini_parser import parse_ini
 
 
 def test_sections_and_keys():
