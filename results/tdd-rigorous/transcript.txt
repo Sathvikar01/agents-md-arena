@@ -1,0 +1,55 @@
+20 tasks found. Let me establish a baseline first.
+**BASELINE: 67 failed, 107 passed.** Now working task by task. Reading the first batch of implementations and their tests.
+All four bugs are clear. Applying minimal fixes:
+
+**t01**: missing `.strip("-")`. **t02**: condition order — `%15` must be checked before `%3`. **t03**: must return `not stack`. **t04**: encode drops the final run; decode's letter/count logic is inverted.
+t01–t04: 32 passed. Reading next batch (t05–t08).
+Bugs identified: **t05** only flattens one level; **t06** no alphabetical tie-break; **t07** `i*i < m` misses perfect-square composites; **t08** `< 6` wrongly counts Saturday.
+t05–t08: 36 passed. Next batch (t09–t12).
+Fixes: **t09** uppercase branch lacks `% 26`; **t10** `frozenset` drops letter multiplicity — use sorted-tuple key; **t11** row/col indices swapped; **t12** missing recency refresh in `get`/`put`.
+All 12 t-tasks green. Reading m01–m03.
+Fixes: **m01** skip blank cells + raise ValueError when no values remain; **m02** strip inline `" ;"` / `" #"` comments; **m03** `complete` sets `done=False` instead of `True`, and sort is descending instead of ascending-stable.
+m01–m03: 24 passed. Reading m04–m05.
+Fixes: **m04** greedy regex collapses multiple placeholders and names aren't trimmed; missing keys must bypass escaping too. **m05** distance not accumulated (`nd = w`), unreachable must return `(None, [])`.
+m04–m05: 15 passed. Now the complex tasks — reading c01-inventory (4 modules).
+Two bugs in c01: pricing tier boundary `>=49` should be `>=50`; `reserve` checks raw on-hand instead of available.
+c01: 13 passed. Reading c02-event-pipeline (4 modules + test).
+Two bugs: `in_window` uses `<= end` instead of `< end`; `bucket_start` uses `round()` instead of floor-to-minute alignment.
+c02: 8 passed. Reading c03-json-router (3 modules + test).
+Two bugs in c03: param regex `(.*)` must be `[^/]+` (no spanning slashes, no empty segments); middleware chain starts from the last-registered middleware instead of the first.
+All 20 tasks fixed. Running the full suite for final verification.
+All 20 tasks fixed. **Final: `python -m pytest tasks -q` → 174 passed, 0 failed** (baseline was 67 failed / 107 passed).
+
+## WHAT changed (implementation files only; zero test edits)
+
+| Task | File | Fix |
+|---|---|---|
+| t01 | slugify.py | strip leading/trailing hyphens |
+| t02 | fizzbuzz.py | check `%15` before `%3`/`%5` |
+| t03 | paren_balance.py | return `not stack` (unclosed opens) |
+| t04 | rle.py | emit final run in encode; letter/count pairing fixed in decode |
+| t05 | flatten.py | recurse into nested lists |
+| t06 | word_count.py | tie-break: sort by `(-count, word)` |
+| t07 | primes.py | trial division bound `i*i <= m` (perfect squares) |
+| t08 | business_days.py | weekday `< 5` (exclude Saturday) |
+| t09 | caesar.py | uppercase branch wraps with `% 26` |
+| t10 | anagram_groups.py | key = sorted tuple (preserves multiplicity), not frozenset |
+| t11 | transpose.py | row/column indices unswapped |
+| t12 | lru_cache.py | `move_to_end` on get and on update-put |
+| m01 | csv_stats.py | skip empty cells; ValueError when no numeric values remain |
+| m02 | ini_parser.py | strip inline `" ;"` / `" #"` comments |
+| m03 | todo_store.py | complete sets `done=True`; pending sorts priority ascending (stable → creation order) |
+| m04 | template_engine.py | non-greedy regex + name trimming; missing keys bypass escaping |
+| m05 | dijkstra.py | accumulate `nd = d + w`, stale-entry skip, unreachable returns `(None, [])` |
+| c01 | pricing.py, store.py | tier boundary `>=50`; reserve checks available not on-hand |
+| c02 | window.py, buckets.py | end-exclusive window; floor-aligned minute buckets |
+| c03 | matcher.py, app.py | params match `[^/]+` (single non-empty segment); middleware runs in registration order |
+
+## PROOF
+- Baseline: `67 failed, 107 passed`
+- Per-task runs after each fix batch: t01–t04 `32 passed`; t05–t08 `36 passed`; t09–t12 `31 passed`; m01–m03 `24 passed`; m04–m05 `15 passed`; c01 `13 passed`; c02 `8 passed`; c03 `15 passed`
+- Final: `python -m pytest tasks -q` → **174 passed**
+
+## RISKS
+- No linter/typechecker configured in repo, so that evidence tier is unavailable.
+- Edge behaviors beyond the test contracts (e.g., INI values containing " #", root-path routing) follow the module docstrings but aren't independently verified by tests.
