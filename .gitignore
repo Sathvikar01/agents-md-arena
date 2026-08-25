@@ -1,0 +1,7 @@
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Run workspaces (ephemeral, results/ keeps only transcripts+scores)
+workspaces/
