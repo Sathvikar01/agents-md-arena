@@ -1,0 +1,34 @@
+Baseline: 67 failed, 107 passed. Now let me read the task files in batches.
+Now the medium tasks:
+Now the complex tasks:
+I've identified all bugs. Now applying fixes:
+Now the m-tasks:
+Now the c-tasks:
+Now run each task suite individually:
+The final run must use the last char, not the pair's first element:
+My edit hit the wrong line. Fixing:
+decode multiplies before reading the count digits. Rewriting it to buffer the letter until its count completes:
+All pass. Verifying no test files were touched:
+Done. **Final: 174 passed, 0 failed** (was 67 failed / 107 passed). All 20 task suites pass individually; only implementation modules were edited — no test files touched, stdlib only, all signatures unchanged.
+
+Fixes applied per task:
+- **t01**: strip leading/trailing hyphens
+- **t02**: check `% 15` before `% 3`/`% 5`
+- **t03**: return `not stack` (detect unclosed opens)
+- **t04**: append final run in encode; decode buffers letter until count digits complete (also fixed trailing-run char)
+- **t05**: recurse into nested lists
+- **t06**: sort by `(-count, word)` for alphabetical tie-break
+- **t07**: trial division bound `i*i <= m`
+- **t08**: business days = `weekday() < 5` (excludes Saturday)
+- **t09**: apply `% 26` to uppercase branch
+- **t10**: anagram key `tuple(sorted(w))` (respects letter multiplicity)
+- **t11**: correct transpose indexing (`[r][c]` → `[c][r]`)
+- **t12**: `move_to_end` on both get and put
+- **m01**: skip blank cells; raise ValueError when no numeric values
+- **m02**: strip inline comments after `" ;"` / `" #"`
+- **m03**: complete sets `done=True`; pending sorted priority ascending
+- **m04**: non-greedy placeholder regex + trim names; leave unknown placeholders untouched
+- **m05**: accumulate distance `nd = d + w`, skip stale heap entries, return `(None, [])` when unreachable
+- **c01**: large tier at qty ≥ 50; remove checks on-hand; reserve checks available; release guards qty ≤ 0
+- **c02**: window end-exclusive; bucket `(ts // 60) * 60`
+- **c03**: params capture `[^/]+` (single segment); middleware runs in registration order

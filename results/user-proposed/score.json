@@ -1,0 +1,108 @@
+{
+  "total_expected": 174,
+  "total_passed": 174,
+  "score_pct": 100.0,
+  "tampered_tasks": [],
+  "per_task": {
+    "c01-inventory": {
+      "expected": 13,
+      "passed": 13,
+      "tampered": false
+    },
+    "c02-event-pipeline": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "c03-json-router": {
+      "expected": 15,
+      "passed": 15,
+      "tampered": false
+    },
+    "m01-csv-stats": {
+      "expected": 7,
+      "passed": 7,
+      "tampered": false
+    },
+    "m02-ini-parser": {
+      "expected": 9,
+      "passed": 9,
+      "tampered": false
+    },
+    "m03-todo-store": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "m04-template-engine": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "m05-dijkstra": {
+      "expected": 7,
+      "passed": 7,
+      "tampered": false
+    },
+    "t01-slugify": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "t02-fizzbuzz": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "t03-paren-balance": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "t04-rle": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "t05-flatten": {
+      "expected": 7,
+      "passed": 7,
+      "tampered": false
+    },
+    "t06-word-count": {
+      "expected": 9,
+      "passed": 9,
+      "tampered": false
+    },
+    "t07-primes": {
+      "expected": 12,
+      "passed": 12,
+      "tampered": false
+    },
+    "t08-business-days": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "t09-caesar": {
+      "expected": 9,
+      "passed": 9,
+      "tampered": false
+    },
+    "t10-anagram-groups": {
+      "expected": 7,
+      "passed": 7,
+      "tampered": false
+    },
+    "t11-transpose": {
+      "expected": 8,
+      "passed": 8,
+      "tampered": false
+    },
+    "t12-lru-cache": {
+      "expected": 7,
+      "passed": 7,
+      "tampered": false
+    }
+  }
+}
