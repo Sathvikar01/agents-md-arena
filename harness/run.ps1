@@ -21,8 +21,11 @@ if (-not (Test-Path (Join-Path $repo "benchmark\manifest.json"))) {
 
 # ---- fresh workspace -------------------------------------------------------
 if (Test-Path $ws) { Remove-Item -Recurse -Force $ws }
-New-Item -ItemType Directory -Force -Path (Split-Path -Parent $ws) | Out-Null
-Copy-Item -Recurse (Join-Path $repo "benchmark\pristine\tasks") $ws
+New-Item -ItemType Directory -Force -Path $ws | Out-Null
+Copy-Item -Recurse (Join-Path $repo "benchmark\pristine\tasks") (Join-Path $ws "tasks")
+if (-not (Test-Path (Join-Path $ws "tasks\t01-slugify"))) {
+    throw "workspace copy failed: tasks/t01-slugify missing"
+}
 
 # ---- isolated global config -------------------------------------------------
 $cfg = Join-Path $ws ".isolated-config"
@@ -49,8 +52,9 @@ if (-not $cmd) { throw "opencode executable not found on PATH" }
 $opencodeExe = $cmd.Source
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 Write-Host "[$Variant] starting opencode ($Model), budget ${BudgetMin}min..."
-$proc = Start-Process -FilePath $opencodeExe `
-    -ArgumentList @("run", "-m", $Model, "`"$prompt`"") `
+$inner = "/d /s /c `"`"$opencodeExe`" run -m $Model `"$prompt`"`""
+$proc = Start-Process -FilePath "$env:ComSpec" `
+    -ArgumentList $inner `
     -WorkingDirectory $ws -NoNewWindow -PassThru `
     -RedirectStandardOutput (Join-Path $res "transcript.txt") `
     -RedirectStandardError (Join-Path $res "stderr.txt")
@@ -61,6 +65,10 @@ if ($timedOut) {
 }
 $sw.Stop()
 Remove-Item Env:\XDG_CONFIG_HOME
+$txBytes = 0
+$txPath = Join-Path $res "transcript.txt"
+if (Test-Path $txPath) { $txBytes = (Get-Item $txPath).Length }
+if ($txBytes -eq 0) { Write-Host "[$Variant] WARNING: empty transcript - opencode may not have run" }
 
 # ---- score -------------------------------------------------------------------
 python (Join-Path $repo "harness\score.py") $ws (Join-Path $res "score.json")
@@ -76,6 +84,7 @@ try { $gitSha = (git -C $repo rev-parse HEAD).Trim() } catch {}
     seconds   = [math]::Round($sw.Elapsed.TotalSeconds, 1)
     timed_out = $timedOut
     exit_code = $proc.ExitCode
+    transcript_bytes = $txBytes
     repo_sha  = $gitSha
 } | ConvertTo-Json | Set-Content -Encoding utf8 (Join-Path $res "meta.json")
 
