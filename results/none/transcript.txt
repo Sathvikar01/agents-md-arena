@@ -1,0 +1,29 @@
+Now the medium tasks:
+Now the complex tasks:
+Now let me run the full test suite:
+All fixed. Final result:
+
+**174 passed, 0 failed** (`python -m pytest tasks -q`, from repo root)
+
+Bugs fixed across all 19 task suites (implementation modules only — no test files touched):
+
+- **t01 slugify**: strip leading/trailing hyphens
+- **t02 fizzbuzz**: check `% 15` first (was shadowed by `% 3`)
+- **t03 paren-balance**: return `not stack` (unclosed opens were passing)
+- **t04 rle**: encode dropped the final run; decode flushed on letters instead of after digits
+- **t05 flatten**: recurse into nested lists instead of one-level extend
+- **t06 word-count**: tie-break alphabetically (`key=(-count, word)`)
+- **t07 primes**: trial division bound `i*i <= m` (squares like 9/25 passed as prime)
+- **t08 business-days**: weekdays are `weekday() < 5` (Saturday was counted)
+- **t09 caesar**: uppercase branch lacked modulo wraparound
+- **t10 anagram-groups**: key must be sorted-char string, not `frozenset` (multiplicity)
+- **t11 transpose**: swapped row/col indices in the comprehension
+- **t12 lru-cache**: `get`/`put` now refresh recency via `move_to_end`
+- **m01 csv-stats**: skip blank cells, raise `ValueError` when no values remain
+- **m02 ini-parser**: strip inline `" ;"` / `" #"` comments from values
+- **m03 todo-store**: `complete` set done to `False`; `pending` sorted descending — both inverted
+- **m04 template-engine**: non-greedy regex, trim names, leave unknown placeholders untouched pre-escape
+- **m05 dijkstra**: accumulate distance (`d + w`, was just `w`) and return `(None, [])` for unreachable
+- **c01 inventory**: bulk tier threshold `>= 50`; `reserve` checks available (on-hand minus reserved)
+- **c02 event-pipeline**: bucket = `(ts // 60) * 60` (not `round`); window end is exclusive
+- **c03 json-router**: params match `[^/]+` (no slash-spanning/empty capture); middleware runs in registration order
