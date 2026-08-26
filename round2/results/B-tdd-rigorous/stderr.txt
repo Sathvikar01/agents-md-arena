@@ -1,0 +1,324 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m→ [0mRead .
+[0m✱ [0mGlob "work/**/*"[90m 11 matches[0m
+[0m→ [0mRead work/apps/orders_app/REFACTORS.md
+[0m→ [0mRead work/apps/logalyzer_app/REFACTORS.md
+[0m→ [0mRead work/apps/orders_app/main.py
+[0m→ [0mRead work/apps/orders_app/pricing.py
+[0m→ [0mRead work/apps/orders_app/store.py
+[0m→ [0mRead work/apps/orders_app/legacy_utils.py
+[0m→ [0mRead work/apps/orders_app/test_behavior_orders.py
+[0m→ [0mRead work/apps/logalyzer_app/parser.py
+[0m→ [0mRead work/apps/logalyzer_app/stats.py
+[0m→ [0mRead work/apps/logalyzer_app/report.py
+[0m→ [0mRead work/apps/logalyzer_app/test_behavior_logalyzer.py
+[0m
+[0m# [0mTodos
+[•] Run baseline test suites for both apps
+[ ] orders_app R1: create taxes.py, dedupe 0.08
+[ ] orders_app R2: OrderStore class replacing ORDERS global
+[ ] orders_app R3: split process_order into validate/price/orchestrate
+[ ] orders_app R4: delete legacy_utils.py
+[ ] orders_app R5: pricing.discount_rate extraction
+[ ] orders_app R6: type hints on public functions
+[ ] logalyzer R1: report.py uses parser.parse_line
+[ ] logalyzer R2: consts.py MINUTE_SECONDS
+[ ] logalyzer R3: LogStats class
+[ ] logalyzer R4+R5: delete analyze_v2, rename f->summarize
+[ ] logalyzer R6: parser maxsplit=2 keyword
+[ ] Final full verification + grep audits + report
+[0m
+[0m$ [0mpython --version; python -m pytest apps/orders_app -q; python -m pytest apps/logalyzer_app -q
+Python 3.11.9
+C:\Users\arsat\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pytest_asyncio\plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+............                                                             [100%]
+12 passed in 0.87s
+C:\Users\arsat\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pytest_asyncio\plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+..........                                                               [100%]
+10 passed in 0.85s
+[0m
+[0m$ [0mpython -c "
+import random
+ok10 = ok05 = True
+bad = []
+random.seed(1)
+vals = [random.uniform(0, 100000) for _ in range(200000)] + [100.0, 500.0, 499.9999999999999, 12.25, 0.1, 30.0]
+for s in vals:
+    if s >= 500:
+        a = s * 0.90; b = s * (1 - 0.10)
+        if a != b:
+            ok10 = False
+            if len(bad) < 3: bad.append(('10', s, a, b))
+    if 100 <= s < 500:
+        a = s * 0.95; b = s * (1 - 0.05)
+        if a != b:
+            ok05 = False
+            if len(bad) < 3: bad.append(('05', s, a, b))
+print('fl(1-0.1)==0.9:', (1 - 0.10) == 0.90)
+print('fl(1-0.05)==0.95:', (1 - 0.05) == 0.95)
+print('products identical over sample:', ok10, ok05, 'counterexamples:', bad[:3])
+"
+fl(1-0.1)==0.9: True
+fl(1-0.05)==0.95: True
+products identical over sample: True True counterexamples: []
+[0m
+[0m← [0mWrite work/apps/orders_app/taxes.py
+Wrote file successfully.
+[0m
+[0m← [0mEdit work/apps/orders_app/pricing.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
+@@ -1,7 +1,9 @@
+ """Pricing helpers (legacy)."""
+ 
++import taxes
+ 
++
+ def apply_discounts(lines):
+     """lines: list of (unit_price:int cents-free float, qty:int). Returns discounted subtotal."""
+     subtotal = 0.0
+     for price, qty in lines:
+
+[0m
+[0m← [0mEdit work/apps/orders_app/pricing.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
+@@ -18,9 +18,9 @@
+     return subtotal
+ 
+ 
+ def calc_tax(amount):
+-    return round(amount * 0.08, 2)
++    return taxes.tax(amount)
+ 
+ 
+-# NOTE(maintainer): tax logic copied here AND inlined in main.process_order --
+-# keep them in sync!
++# NOTE(maintainer): tax logic lives in taxes.tax -- pricing.calc_tax and
++# main.process_order both delegate to it.
+
+[0m
+[0m← [0mEdit work/apps/orders_app/main.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\main.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\main.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\main.py
+@@ -1,8 +1,9 @@
+ """Order entry point (legacy god-function)."""
+ 
+ import store
+ import pricing
++import taxes
+ 
+ 
+ def process_order(order_id, lines, customer):
+     if not lines:
+
+[0m
+[0m← [0mEdit work/apps/orders_app/main.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\main.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\main.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\main.py
+@@ -25,9 +25,9 @@
+ else:
+     disc_sub = subtotal
+     d_amt = 0.0
+ 
+-t = round(disc_sub * 0.08, 2)          # duplicate tax logic!
++t = taxes.tax(disc_sub)                # duplicate tax logic removed
+ total = round(disc_sub + t, 2)
+ 
+ receipt = (
+     f"ORDER {order_id} FOR {customer}\n"
+
+[0m
+[0m$ [0mrg -n "0\.08" apps/orders_app --glob "!test_*"; python -m pytest apps/orders_app -q 2>&1 | rg -v "PytestDeprecation|asyncio_default|warnings.warn|^The event"
+rg : The term 'rg' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:1
++ rg -n "0\.08" apps/orders_app --glob "!test_*"; python -m pytest apps ...
++ ~~
+    + CategoryInfo          : ObjectNotFound: (rg:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+ 
+rg : The term 'rg' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:1 char:92
++ ... glob "!test_*"; python -m pytest apps/orders_app -q 2>&1 | rg -v "Pyt ...
++                                                                ~~
+    + CategoryInfo          : ObjectNotFound: (rg:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+[0m
+[0m✱ [0mGrep "0\.08"[90m in work/apps/orders_app · 3 matches[0m
+[0m
+[0m$ [0mpython -m pytest apps/orders_app -q -p no:cacheprovider 2>$null
+............                                                             [100%]
+12 passed in 1.02s
+[0m
+[0m→ [0mRead work/apps/orders_app/pricing.py
+[0m
+[0m← [0mEdit work/apps/orders_app/pricing.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\orders_app\pricing.py
+@@ -2,21 +2,26 @@
+ 
+ import taxes
+ 
+ 
++def discount_rate(subtotal):
++    if subtotal >= 500:
++        return 0.10
++    if subtotal >= 100:
++        return 0.05
++    return 0.0
++
++
+ def apply_discounts(lines):
+     """lines: list of (unit_price:int cents-free float, qty:int). Returns discounted subtotal."""
+     subtotal = 0.0
+     for price, qty in lines:
+         if qty < 1:
+             raise ValueError("invalid quantity")
+         subtotal += price * qty
+     # tiered discounts
+-    if subtotal >= 500:
+-        return subtotal * 0.90
+-    if subtotal >= 100:
+-        return subtotal * 0.95
+-    return subtotal
++    rate = discount_rate(subtotal)
++    return subtotal * (1 - rate)
+ 
+ 
+ def calc_tax(amount):
+     return taxes.tax(amount)
+
+[0m
+[0m$ [0mpython -m pytest apps/orders_app -q -p no:cacheprovider 2>$null
+............                                                             [100%]
+12 passed in 0.91s
+[0m
+[0m← [0mWrite work/apps/orders_app/main.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython -m pytest apps/orders_app -q -p no:cacheprovider 2>$null
+............                                                             [100%]
+12 passed in 0.87s
+[0m
+[0m← [0mWrite work/apps/orders_app/store.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython -m pytest apps/orders_app -q -p no:cacheprovider 2>$null
+............                                                             [100%]
+12 passed in 0.87s
+[0m
+[0m✱ [0mGrep "legacy_utils"[90m in work · 0 matches[0m
+[0m
+[0m$ [0mRemove-Item -LiteralPath "apps\orders_app\legacy_utils.py"; if ($?) { Test-Path -LiteralPath "apps\orders_app\legacy_utils.py" }; python -m pytest apps/orders_app -q -p no:cacheprovider 2>$null
+False
+............                                                             [100%]
+12 passed in 0.79s
+[0m
+[0m← [0mWrite work/apps/orders_app/main.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/orders_app/pricing.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/orders_app/store.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/orders_app/taxes.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython -m pytest apps/orders_app -q -p no:cacheprovider 2>$null; python -m py_compile apps\orders_app\main.py apps\orders_app\pricing.py apps\orders_app\store.py apps\orders_app\taxes.py; if ($?) { "compile OK" }
+............                                                             [100%]
+12 passed in 0.80s
+compile OK
+[0m
+[0m← [0mWrite work/apps/logalyzer_app/report.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython -m pytest apps/logalyzer_app -q -p no:cacheprovider 2>$null
+..........                                                               [100%]
+10 passed in 1.03s
+[0m
+[0m← [0mWrite work/apps/logalyzer_app/consts.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/logalyzer_app/stats.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython -m pytest apps/logalyzer_app -q -p no:cacheprovider 2>$null
+..........                                                               [100%]
+10 passed in 0.83s
+[0m
+[0m← [0mEdit work/apps/logalyzer_app/parser.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\logalyzer_app\parser.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\logalyzer_app\parser.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-tdd-rigorous\work\apps\logalyzer_app\parser.py
+@@ -4,9 +4,9 @@
+ 
+ 
+ def parse_line(line):
+     # format: LEVEL|epoch|message   (message may contain '|')
+-    parts = line.split("|", 2)
++    parts = line.split("|", maxsplit=2)
+     if len(parts) != 3:
+         return None
+     level, ts, msg = parts
+     return {"level": level, "ts": int(ts), "msg": msg.rstrip("\n")}
+
+[0m
+[0m✱ [0mGrep "60|analyze_v2|def f\(|split\("\|"\)"[90m in work/apps/logalyzer_app · 1 match[0m
+[0m✱ [0mGlob "work/apps/**/*.py"[90m 10 matches[0m
+[0m
+[0m$ [0mpython -m pytest apps/orders_app apps/logalyzer_app -q -p no:cacheprovider 2>$null; git status --porcelain
+......................                                                   [100%]
+22 passed in 1.06s
+ M apps/logalyzer_app/parser.py
+ M apps/logalyzer_app/report.py
+ M apps/logalyzer_app/stats.py
+ D apps/orders_app/legacy_utils.py
+ M apps/orders_app/main.py
+ M apps/orders_app/pricing.py
+ M apps/orders_app/store.py
+?? apps/logalyzer_app/__pycache__/
+?? apps/logalyzer_app/consts.py
+?? apps/orders_app/__pycache__/
+?? apps/orders_app/taxes.py
+[0m
+[0m$ [0mGet-ChildItem -Recurse -Directory -Filter __pycache__ | Remove-Item -Recurse -Force
+(no output)
+[0m
+[0m# [0mTodos
+[✓] Run baseline test suites for both apps
+[✓] orders_app R1: create taxes.py, dedupe 0.08
+[✓] orders_app R2: OrderStore class replacing ORDERS global
+[✓] orders_app R3: split process_order into validate/price/orchestrate
+[✓] orders_app R4: delete legacy_utils.py
+[✓] orders_app R5: pricing.discount_rate extraction
+[✓] orders_app R6: type hints on public functions
+[✓] logalyzer R1: report.py uses parser.parse_line
+[✓] logalyzer R2: consts.py MINUTE_SECONDS
+[✓] logalyzer R3: LogStats class
+[✓] logalyzer R4+R5: delete analyze_v2, rename f->summarize
+[✓] logalyzer R6: parser maxsplit=2 keyword
+[✓] Final full verification + grep audits + report
+[0m

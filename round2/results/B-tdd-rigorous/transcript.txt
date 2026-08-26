@@ -1,0 +1,51 @@
+I've read both apps' sources, REFACTORS.md directives, and characterization tests. Following the TDD protocol: baseline first, then refactor step-by-step with verification after each change.
+Baseline is green: **orders_app 12 passed, logalyzer_app 10 passed**. Before touching pricing code, I need to verify a float-equivalence assumption: whether `subtotal * (1 - rate)` is bit-identical to `subtotal * 0.90` / `subtotal * 0.95` — this determines how I extract `discount_rate` without changing any receipt output.
+Float-equivalence confirmed: `(1 - rate)` multiplication is bit-identical to the legacy factor multiplications over 200k sampled subtotals including exact boundary values. Safe to extract the tier rate without changing any output.
+
+**R1** — create `taxes.py`, dedupe the `0.08` literal:
+R1 verified: `0.08` only in `taxes.py` (remaining hits are inside the locked test file), 12 passed.
+
+**R5** — extract `discount_rate`:
+**R3** — split the god-function in `main.py`:
+**R2** — replace the module-level mutable `ORDERS` global with an `OrderStore` class:
+**R4** — delete dead module (first confirm nothing imports it):
+**R6** — type hints on all public functions across the four modules:
+orders_app complete — 12 passed after every step. Now **logalyzer_app R1**: `report.py` delegates parsing to `parser.parse_line`:
+**R2 + R3 + R4 + R5** in `stats.py` (plus new `consts.py`) — I'll apply them as one file rewrite, then verify:
+**R6** — explicit `maxsplit=` keyword in `parser.py`:
+Now the final directive audits and full-suite verification:
+All audits clean. Final full verification of both suites plus confirmation that test files are untouched:
+All directives in both REFACTORS.md files are complete. Both characterization suites pass, unmodified.
+
+## WHAT changed
+
+**orders_app**
+- **R1** `taxes.py` (new): `TAX_RATE = 0.08`, `tax(amount)`. `main.py` and `pricing.calc_tax` delegate to it. Grep proof: `0.08` appears only in `taxes.py` among source files.
+- **R2** `store.py`: mutable module global `ORDERS` eliminated; new `OrderStore` class (`save_order`/`get_order`/`clear`) with shared instance `order_store`; module-level functions now delegate so existing callers (tests' `store.clear()`/`store.get_order`, main's `store.save_order`) work unchanged.
+- **R3** `main.py`: god-function split into `validate_order(lines)` (raises `"empty order"` / `"invalid quantity"`), `price_order(lines)` → `{subtotal, discount, tax, total}`, and slim `process_order` that validates, prices, persists, formats. The duplicated tier/tax logic is gone — it uses `pricing.discount_rate` + `taxes.tax`.
+- **R4** `legacy_utils.py` deleted (confirmed no importers first; `Test-Path` → `False`).
+- **R5** `pricing.py`: public `discount_rate(subtotal)` returning `0.10/0.05/0.0`; `apply_discounts` calls it; thresholds identical. Float-safety was characterized before editing: `(1 - rate)` products proven bit-identical to legacy `0.90`/`0.95` multiplications over 200k sampled subtotals plus boundary values (100.0, 500.0, 499.9999999999999…).
+- **R6** full parameter+return type hints on every public function in `main.py`, `pricing.py`, `store.py`, `taxes.py`.
+
+**logalyzer_app**
+- **R1** `report.py`: `format_entry` now delegates to `parser.parse_line` (`None` → `"?"`); grep proof: no `split("|")` outside `parser.py`.
+- **R2** `consts.py` (new): `MINUTE_SECONDS = 60`, used by `stats.minute_counts`; grep proof: literal `60` exists only in `consts.py`.
+- **R3** `stats.py`: `LogStats(lines)` class with `levels()`/`minutes()`; module-level `level_counts`/`minute_counts` remain and delegate via `LogStats(lines)`.
+- **R4** `analyze_v2` deleted. **R5** `f` renamed `summarize`; grep proof: no `def f(` remains.
+- **R6** `parser.py`: `line.split("|", maxsplit=2)`.
+
+## PROOF
+
+```
+BASELINE:  python -m pytest apps/orders_app -q   → 12 passed
+           python -m pytest apps/logalyzer_app -q → 10 passed
+AFTER EACH STEP: suite re-run green every time (see transcript)
+FINAL:     python -m pytest apps/orders_app apps/logalyzer_app -q
+           ......................   [100%] 22 passed in 1.06s
+           python -m py_compile (all orders_app modules) → OK
+```
+
+## RISKS
+
+- Test files untouched: `git status` shows only source files modified/deleted/added — neither `test_behavior_*.py` appears.
+- Residual risk is theoretical only: for adversarial float subtotals far outside the tested sample, receipt rounding could theoretically differ from the legacy code path by ≤1 ULP before formatting — mitigated by the bit-identity check above; all characterization cases match exactly.
