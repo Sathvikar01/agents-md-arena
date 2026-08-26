@@ -1,4 +1,4 @@
-﻿r"""Strict minimal JSON parser (parse-only subset of RFC 8259).
+r"""Strict minimal JSON parser (parse-only subset of RFC 8259).
 
 Contract - implement loads(text) exactly as specified:
 
