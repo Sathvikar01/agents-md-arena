@@ -1,0 +1,29 @@
+Both apps are small and fully mapped. Setting up tracking and checking the environment (including a floating-point probe that determines how safely `pricing.py` can express its discount math via `discount_rate`).
+Environment confirmed (Python 3.11.9, pytest 8.3.5). The FP probe confirms `1-0.1==0.9` and `1-0.05==0.95`, so `apply_discounts` can safely express its math via `discount_rate` with bit-identical results. Spawning two implementer agents in parallel — one per app, disjoint file boundaries:
+Both agents report green. Per protocol, I verify their output myself rather than trusting reports — reading every changed file and running mechanical constraint checks:
+All checks pass except the report.py grep, which failed due to a bad PowerShell flag (`-SimplePattern` isn't a parameter) — rerunning it correctly. Simultaneously reading remaining files and launching the Phase-4 adversarial reviewer:
+Red-team verdict: SHIP — with one LOW/informational note only (validation front-loading mandated by directive R3 itself). Closing Phase 5 with final independent checks: the earlier report.py grep had a path bug, but my full read of report.py confirms zero `split` occurrences; verifying test-file integrity against pristine copies as the last step:
+Pristine path guess was wrong — locating the actual pristine copies:
+Relative-path arithmetic error on my part — using absolute paths:
+That output is untrustworthy — the hash calls errored and `$null -eq $null` printed a false "IDENTICAL". Redoing it plainly:
+All directives complete. Final report:
+
+**logalyzer_app (10/10 passed)**
+- R1: `report.py` now uses `parser.parse_line`; zero `split("|")` occurrences outside `parser.py`
+- R2: new `consts.py` (`MINUTE_SECONDS = 60`); no bare `60` left in `stats.py`
+- R3: `LogStats` class with `levels()`/`minutes()`; module functions delegate to temp instances
+- R4: `analyze_v2` deleted · R5: `f` → `summarize`, no `def f` remains · R6: `maxsplit=2` explicit
+
+**orders_app (12/12 passed)**
+- R1: new `taxes.py` (`TAX_RATE=0.08`, `tax()`); `main.py` + `pricing.py` use it; `0.08` exists only in `taxes.py`
+- R2: global `ORDERS` dict eliminated → `OrderStore` + shared `order_store`; module wrappers keep callers working
+- R3: split into `validate_order` / `price_order` (subtotal/discount/tax/total dict) / slim `process_order`, all in `main.py`
+- R4: `legacy_utils.py` deleted · R5: public `discount_rate()` used by `apply_discounts` — verified bit-identical to old multipliers over a 120k-value sweep
+- R6: full param+return type hints on all public functions in the four modules
+
+**Verification evidence**
+- Combined run from `work/`: `python -m pytest apps/logalyzer_app apps/orders_app -q` → **22 passed, 0 failed**
+- Red-team review: all 12 directives PASS; only finding is a LOW/informational note that validation front-loading (mandated by orders R3) changes the exception type on pathological inputs where an earlier line fails arithmetic while a later line has qty<1
+- Both `test_behavior_*.py` files hash-verified **byte-identical to pristine copies**; no extra features or unrelated edits
+
+Remaining risk: none known.
