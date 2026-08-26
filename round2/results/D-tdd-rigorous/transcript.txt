@@ -1,0 +1,5 @@
+Baseline: no tests exist yet (0 tests). Following the TDD loop — I'll write characterization tests first, prove they fail against the stub, then implement `client.py`.
+Characterization confirmed: 10/11 fail with `NotImplementedError` against the stub. Now implementing the client.
+The client is correct; my test expectation was wrong (250 items at default `page_size=20` = 13 requests, not 3). Fixing the test's arithmetic:
+All 12 tests pass. Now the required live end-to-end verification — booting the actual server and exercising the client with the default real `time.sleep` (including honoring a real 1-second `Retry-After`):
+`serve()` takes no `stale_tokens` kwarg — the mockserver hardcodes `{"tok-stale"}`. Fixing my check script:
