@@ -1,0 +1,11 @@
+﻿{
+    "seconds":  1500.9,
+    "track":  "A",
+    "variant":  "orchestrator-heavy",
+    "timed_out":  true,
+    "transcript_bytes":  677,
+    "repo_sha":  "164a4e6ee453ed9b0931f10ad34766ac4ee9f9ae",
+    "model":  "opencode-go/ox-alpha-free",
+    "budget_min":  25,
+    "exit_code":  null
+}

@@ -1,0 +1,4 @@
+8 tasks found. Let me read all specs and stubs in parallel.
+All 8 specs read. Following the orchestration protocol: recon done (specs are fully self-contained in module docstrings), tasks are fully independent → parallel implementer swarm with strict file boundaries, then adversarial review, then my own end-to-end verification.
+Spawning all 8 implementer agents in parallel, each with the verbatim contract, my resolved design decisions for ambiguous edges, and strict file boundaries.
+All 8 implementers report success. Per protocol: never trust reports blindly → Phase 4 adversarial red-team (4 parallel agents, 2 tasks each), then my own independent verification.

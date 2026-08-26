@@ -1,0 +1,82 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m$ [0mGet-ChildItem -Recurse -Depth 3 work/tasks | Select-Object FullName
+FullName                                                                                                               
+--------                                                                                                               
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A1-jsonlite          
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A2-cronlite          
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A3-ttlcache          
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A4-tokenbucket       
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A5-intervals         
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A6-roman             
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A7-globber           
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A8-semver            
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A1-jsonlite\jsonli...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A1-jsonlite\SPEC.md  
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A2-cronlite\cronli...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A2-cronlite\SPEC.md  
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A3-ttlcache\SPEC.md  
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A3-ttlcache\ttlcac...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A4-tokenbucket\SPE...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A4-tokenbucket\tok...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A5-intervals\inter...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A5-intervals\SPEC.md 
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A6-roman\roman.py    
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A6-roman\SPEC.md     
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A7-globber\globber.py
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A7-globber\SPEC.md   
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A8-semver\semver.py  
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-orchestrator-heavy\work\tasks\A8-semver\SPEC.md
+[0m
+[0m→ [0mRead work/tasks/A1-jsonlite/SPEC.md
+[0m→ [0mRead work/tasks/A1-jsonlite/jsonlite.py
+[0m→ [0mRead work/tasks/A2-cronlite/SPEC.md
+[0m→ [0mRead work/tasks/A2-cronlite/cronlite.py
+[0m→ [0mRead work/tasks/A3-ttlcache/SPEC.md
+[0m→ [0mRead work/tasks/A3-ttlcache/ttlcache.py
+[0m→ [0mRead work/tasks/A4-tokenbucket/SPEC.md
+[0m→ [0mRead work/tasks/A4-tokenbucket/tokenbucket.py
+[0m→ [0mRead work/tasks/A5-intervals/SPEC.md
+[0m→ [0mRead work/tasks/A5-intervals/intervals.py
+[0m→ [0mRead work/tasks/A6-roman/SPEC.md
+[0m→ [0mRead work/tasks/A6-roman/roman.py
+[0m→ [0mRead work/tasks/A7-globber/SPEC.md
+[0m→ [0mRead work/tasks/A7-globber/globber.py
+[0m→ [0mRead work/tasks/A8-semver/SPEC.md
+[0m→ [0mRead work/tasks/A8-semver/semver.py
+[0m
+[0m# [0mTodos
+[✓] Phase 1-2: Read all 8 SPECs/stubs, plan decomposition
+[•] Phase 3: Spawn 8 parallel implementer agents (one per task)
+[ ] Phase 4: Adversarial red-team review of all implementations
+[ ] Phase 5: Write + run own comprehensive sanity suites, fix all findings
+[ ] Final: re-read each SPEC line by line vs implementation
+[0m
+[0m• [0mImplement A1 jsonlite parser[90m General Agent[0m
+[0m• [0mImplement A2 cronlite evaluator[90m General Agent[0m
+[0m• [0mImplement A3 TTLCache LRU[90m General Agent[0m
+[0m• [0mImplement A4 TokenBucket[90m General Agent[0m
+[0m• [0mImplement A5 interval algebra[90m General Agent[0m
+[0m• [0mImplement A6 roman numerals[90m General Agent[0m
+[0m• [0mImplement A7 glob matcher[90m General Agent[0m
+[0m✓ [0mImplement A5 interval algebra[90m General Agent[0m
+[0m✓ [0mImplement A4 TokenBucket[90m General Agent[0m
+[0m• [0mImplement A8 semver utilities[90m General Agent[0m
+[0m✓ [0mImplement A3 TTLCache LRU[90m General Agent[0m
+[0m✓ [0mImplement A7 glob matcher[90m General Agent[0m
+[0m✓ [0mImplement A6 roman numerals[90m General Agent[0m
+[0m✓ [0mImplement A1 jsonlite parser[90m General Agent[0m
+[0m✓ [0mImplement A2 cronlite evaluator[90m General Agent[0m
+[0m✓ [0mImplement A8 semver utilities[90m General Agent[0m
+[0m
+[0m# [0mTodos
+[✓] Phase 1-2: Read all 8 SPECs/stubs, plan decomposition
+[✓] Phase 3: Spawn 8 parallel implementer agents (one per task)
+[•] Phase 4: Adversarial red-team review of all implementations
+[ ] Phase 5: Write + run own comprehensive sanity suites, fix all findings
+[ ] Final: re-read each SPEC line by line vs implementation
+[0m
+[0m• [0mRed-team A1+A2 implementations[90m General Agent[0m
+[0m• [0mRed-team A3+A4 implementations[90m General Agent[0m
+[0m• [0mRed-team A5+A6 implementations[90m General Agent[0m
