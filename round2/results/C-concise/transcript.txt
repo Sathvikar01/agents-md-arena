@@ -1,0 +1,13 @@
+The scorer imports `answers` from work/, so I'll create work/answers.py implementing all 15 questions. First, build the DB and probe edge cases.
+PowerShell quoting issue — I'll use a probe script file instead.
+Critical findings: itemless **paid** orders exist (95, 101) affecting q06 semantics; q09 max is unique (no tie); products 18,19 never ordered; customers 2,29 have zero paid orders. Now checking tie sensitivity for q02/q12:
+No rounding ties in q02/q12; q06 decision: docstrings explicitly flag zero-inclusion only when intended ("INCLUDING customers with zero" in q08), so q06 uses natural inner-join semantics (itemless paid orders excluded). Writing answers.py:
+All outputs look sane. Running final consistency assertions before cleanup:
+Created `work/answers.py` (the workspace had `questions.py` stubs; the scorer imports `answers`) with all 15 questions as SQL + `fetchall()`.
+
+Key decisions from data probing:
+- **q06**: itemless paid orders exist (95, 101). Docstrings call out zero-inclusion explicitly only when intended (q08 "INCLUDING customers with zero"), so q06 uses inner-join semantics → avg over the 89 paid orders having items = 1592.12.
+- **q09**: max line value is unique at top (no tie), returned unrounded: (3, 10, 1439.64).
+- **q02/q12**: verified raw vs rounded revenue rankings are identical — no tie ambiguity.
+
+Verified end-to-end: q03 sums to 140 orders, q08 sums to 91 paid incl. two zeros, q15 partition closes to 140, all counts cross-checked against raw SQL. Probe/verify scripts cleaned up.

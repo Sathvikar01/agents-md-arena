@@ -1,0 +1,137 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m✗ [0mRead work/answers.py failed
+[91m[1mError: [0mFile not found: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-concise\work\answers.py
+[0m→ [0mRead work/db_generator.py
+[0m✱ [0mGlob "work/**/*"[90m 2 matches[0m
+[0m→ [0mRead work/questions.py
+[0m✱ [0mGlob "**/*.py"[90m in . · 2 matches[0m
+[0m
+[0m$ [0mgit log --oneline -10; git status --short
+9400f87 results(round2/C-none): 100.0% (15/15)
+6555759 results(round2/B-user-proposed): 100.0% - track B complete, all variants 100%
+e3445f3 results(round2/B-orchestrator-heavy): 100.0%
+92c96fd results(round2/B-tdd-rigorous): 100.0%
+50af87d results(round2/B-concise): 100.0%
+77d4f2a results(round2/B-none): 100.0% (behavior+structural)
+c341446 results(round2/A-user-proposed): 0.56% DNF x4 - upstream stream drops documented
+755ecf7 results(round2/A-orchestrator-heavy): 100.0%
+164a4e6 results(round2/A-tdd-rigorous): 36.16% (cap)
+7aa23b8 results(round2/A-concise): 93.22% (cap)
+ M ../../../harness/make_manifest2.py
+ M ../../../harness/run_round2.ps1
+?? ../../results/C-concise/
+[0m
+[0m✱ [0mGrep "answers|questions"[90m in C:/Users/arsat/OneDrive/Desktop/agents-md-arena/round2/harness · 21 matches[0m
+[0m
+[0m# [0mTodos
+[•] Build ecommerce.db
+[ ] Probe data edge cases (itemless orders, ties)
+[ ] Implement answers.py q01-q15
+[ ] Verify all outputs and sanity-check counts
+[0m
+[0m$ [0mpython db_generator.py
+built ecommerce.db
+[0m
+[0m$ [0mpython -c "
+import sqlite3
+conn = sqlite3.connect('ecommerce.db')
+c = conn.cursor()
+print('counts:', c.execute('SELECT (SELECT COUNT(*) FROM customers),(SELECT COUNT(*) FROM products),(SELECT COUNT(*) FROM orders),(SELECT COUNT(*) FROM order_items)').fetchone())
+print('orders per status:', c.execute('SELECT status, COUNT(*) FROM orders GROUP BY status').fetchall())
+print('itemless orders:', c.execute('SELECT o.id, o.status FROM orders o WHERE NOT EXISTS(SELECT 1 FROM order_items oi WHERE oi.order_id=o.id)').fetchall())
+print('never-ordered products:', c.execute('SELECT id,name FROM products p WHERE NOT EXISTS(SELECT 1 FROM order_items oi WHERE oi.product_id=p.id)').fetchall())
+print('max line value rows:', c.execute('SELECT oi.order_id, oi.product_id, oi.qty*oi.unit_price FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.status=\'paid\' ORDER BY 3 DESC, 1 ASC LIMIT 5').fetchall())
+print('customers with zero paid orders:', c.execute('SELECT id FROM customers c WHERE NOT EXISTS(SELECT 1 FROM orders o WHERE o.customer_id=c.id AND status=\'paid\')').fetchall())
+print('DE count:', c.execute('SELECT COUNT(*) FROM customers WHERE country=\'DE\'').fetchone())
+print('A names:', c.execute(\"SELECT name FROM customers WHERE name LIKE 'A%' ORDER BY name\").fetchall())
+conn.close()
+"
+File "<string>", line 12
+    print('A names:', c.execute(" SELECT name FROM customers WHERE name LIKE A% ORDER BY name\).fetchall())
+                                ^
+SyntaxError: unterminated string literal (detected at line 12)
+[0m
+[0m← [0mWrite work/probe.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython probe.py
+counts: (30, 19, 140, 302)
+orders per status: [('cancelled', 29), ('paid', 91), ('pending', 20)]
+itemless orders: [(5, 'cancelled'), (53, 'cancelled'), (95, 'paid'), (99, 'cancelled'), (101, 'paid'), (130, 'cancelled')]
+never-ordered products: [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')]
+top line values: [(3, 10, 1439.6399999999999), (19, 6, 1436.76), (50, 6, 1436.76), (140, 6, 1436.76), (26, 16, 1426.1399999999999), (55, 16, 1426.1399999999999)]
+cust zero paid: [(2,), (29,)]
+DE count: (4,)
+A names: [('Amelie Aerhoff',), ('Anke Derhoff',), ('Anna Aerhoff',), ('Anton Berhoff',), ('Astrid Cerhoff',)]
+distinct countries: [('DE',), ('FR',), ('GB',), ('NL',), ('US',)]
+months: [('2026-01',), ('2026-02',), ('2026-03',), ('2026-04',), ('2026-05',), ('2026-06',)]
+[0m
+[0m← [0mWrite work/probe.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython probe.py
+q02 raw vs rounded ranking:
+(16, 15212.16, 15212.16)
+(3, 12954.44, 12954.44)
+(4, 11851.32, 11851.32)
+(5, 11322.6, 11322.6)
+(6, 11015.16, 11015.16)
+(13, 8935.85, 8935.85)
+(12, 8777.52, 8777.52)
+(7, 8747.48, 8747.48)
+(2, 7411.14, 7411.14)
+(1, 7333.67, 7333.67)
+(11, 7317.45, 7317.45)
+(17, 6810.3, 6810.3)
+(15, 6187.5, 6187.5)
+(9, 5617.3, 5617.3)
+(14, 5070.25, 5070.25)
+(10, 4798.8, 4798.8)
+(8, 2335.45, 2335.4500000000003)
+
+q06 inner-join avg: (1592.12,)
+q06 incl-zero avg: (1557.13,)
+
+q04 monthly: [('2026-01', 28579.77), ('2026-02', 19304.49), ('2026-03', 19016.82), ('2026-04', 27821.3), ('2026-05', 23875.56), ('2026-06', 23100.45)]
+
+q12 june categories: [('displays', 8717.27), ('peripherals', 4921.15), ('audio', 4337.48), ('storage', 4153.5), ('network', 971.05)]
+
+q15: [(11, 4), (14, 4), (21, 4), (26, 4), (29, 4), (40, 4), (46, 4), (54, 4), (55, 4), (63, 4), (71, 4), (72, 4), (111, 4), (114, 4), (1, 3), (9, 3), (17, 3), (18, 3), (19, 3), (28, 3), (31, 3), (33, 3), (34, 3), (37, 3), (38, 3), (47, 3), (49, 3), (51, 3), (59, 3), (74, 3), (76, 3), (78, 3), (79, 3), (84, 3), (85, 3), (88, 3), (93, 3), (97, 3), (102, 3), (104, 3), (106, 3), (107, 3), (110, 3), (115, 3), (121, 3), (122, 3), (123, 3), (129, 3), (131, 3), (133, 3), (136, 3), (140, 3), (3, 2), (4, 2), (8, 2), (10, 2), (15, 2), (24, 2), (25, 2), (30, 2), (32, 2), (41, 2), (42, 2), (43, 2), (44, 2), (58, 2), (61, 2), (62, 2), (67, 2), (70, 2), (73, 2), (80, 2), (81, 2), (82, 2), (94, 2), (96, 2), (98, 2), (100, 2), (103, 2), (108, 2), (109, 2), (112, 2), (116, 2), (118, 2), (124, 2), (125, 2), (126, 2), (137, 2), (138, 2)]
+[0m
+[0m← [0mWrite work/answers.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/verify.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython verify.py
+q01 (4 rows): [(2, 'Ben Berhoff'), (10, 'Jonas Jerhoff'), (11, 'Kara Kerhoff'), (20, 'Tara Terhoff')]
+q02 (3 rows): [(16, 15212.16), (3, 12954.44), (4, 11851.32)]
+q03 (3 rows): [('cancelled', 29), ('paid', 91), ('pending', 20)]
+q04 (6 rows): [('2026-01', 28579.77), ('2026-02', 19304.49), ('2026-03', 19016.82), ('2026-04', 27821.3), ('2026-05', 23875.56), ('2026-06', 23100.45)]
+q05 (1 rows): [(2, 'Ben Berhoff')]
+q06 (1 rows): [(1592.12,)]
+q07 (2 rows): [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')]
+q08 (30 rows): [(1, 6), (2, 0), (3, 1), (4, 2), (5, 1), (6, 10), (7, 5), (8, 5), (9, 3), (10, 1), (11, 2), (12, 5), (13, 2), (14, 3), (15, 4), (16, 1), (17, 2), (18, 2), (19, 2), (20, 3), (21, 2), (22, 4), (23, 2), (24, 5), (25, 1), (26, 4), (27, 6), (28, 5), (29, 0), (30, 2)]
+q09 (1 rows): [(3, 10, 1439.6399999999999)]
+q10 (1 rows): [(35.0,)]
+q11 (5 rows): [('DE',), ('FR',), ('GB',), ('NL',), ('US',)]
+q12 (5 rows): [('displays', 8717.27), ('peripherals', 4921.15), ('audio', 4337.48), ('storage', 4153.5), ('network', 971.05)]
+q13 (5 rows): [('Amelie Aerhoff',), ('Anke Derhoff',), ('Anna Aerhoff',), ('Anton Berhoff',), ('Astrid Cerhoff',)]
+q14 (5 rows): [('audio', 224.58, 455.82), ('displays', 312.41, 478.92), ('network', 179.65, 479.88), ('peripherals', 202.81, 365.73), ('storage', 11.75, 475.38)]
+q15 (89 rows): [(11, 4), (14, 4), (21, 4), (26, 4), (29, 4), (40, 4), (46, 4), (54, 4), (55, 4), (63, 4), (71, 4), (72, 4), (111, 4), (114, 4), (1, 3), (9, 3), (17, 3), (18, 3), (19, 3), (28, 3), (31, 3), (33, 3), (34, 3), (37, 3), (38, 3), (47, 3), (49, 3), (51, 3), (59, 3), (74, 3), (76, 3), (78, 3), (79, 3), (84, 3), (85, 3), (88, 3), (93, 3), (97, 3), (102, 3), (104, 3), (106, 3), (107, 3), (110, 3), (115, 3), (121, 3), (122, 3), (123, 3), (129, 3), (131, 3), (133, 3), (136, 3), (140, 3), (3, 2), (4, 2), (8, 2), (10, 2), (15, 2), (24, 2), (25, 2), (30, 2), (32, 2), (41, 2), (42, 2), (43, 2), (44, 2), (58, 2), (61, 2), (62, 2), (67, 2), (70, 2), (73, 2), (80, 2), (81, 2), (82, 2), (94, 2), (96, 2), (98, 2), (100, 2), (103, 2), (108, 2), (109, 2), (112, 2), (116, 2), (118, 2), (124, 2), (125, 2), (126, 2), (137, 2), (138, 2)]
+[0m
+[0m← [0mWrite work/verify.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython verify.py; if ($?) { Remove-Item probe.py, verify.py }
+all consistency checks passed
+[0m
+[0m# [0mTodos
+[✓] Build ecommerce.db
+[✓] Probe data edge cases (itemless orders, ties)
+[✓] Implement answers.py q01-q15
+[✓] Verify all outputs and sanity-check counts
+[0m
