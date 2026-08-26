@@ -1,6 +1,6 @@
-"""Strict minimal JSON parser (parse-only subset of RFC 8259).
+﻿r"""Strict minimal JSON parser (parse-only subset of RFC 8259).
 
-Contract — implement loads(text) exactly as specified:
+Contract - implement loads(text) exactly as specified:
 
 Return Python objects:
     JSON object  -> dict[str, Any]
@@ -12,16 +12,16 @@ Return Python objects:
     null         -> None
 
 Grammar rules (violations raise ValueError):
-    - text may be surrounded by insignificant whitespace (space, \\t, \\n, \\r)
-      anywhere between tokens, but must contain exactly ONE top-level value;
-      anything after it (except whitespace) is an error.
+    - text may contain insignificant whitespace (space, \t, \n, \r) between
+      tokens, but must hold exactly ONE top-level value; anything after it
+      (except whitespace) is an error.
     - Empty or whitespace-only input is an error.
     - Strings are double-quoted. Allowed escapes:
-        \" \\ \/ \b \f \n \r \t \uXXXX  (exactly four hex digits)
+        \" \\ \/ \b \f \n \r \t and \uXXXX (exactly four hex digits)
       Any other escape sequence is an error.
       A raw control character (code point < 0x20) inside a string is an error.
     - Numbers match:  -?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?
-      So: leading zeros ('01'), lone '-' , '1.', '.5', '+1', '1e' are errors.
+      So leading zeros ('01'), lone '-', '1.', '.5', '+1', '1e' are errors.
     - Objects: '{' (string ':' value) (',' string ':' value)* '}'
       Arrays:  '[' value (',' value)* ']'
       Trailing commas are errors. Missing colons/commas are errors.
@@ -32,9 +32,9 @@ Grammar rules (violations raise ValueError):
 Examples:
     loads('{"a": [1, 2.5e2, "x\\n", true, null]}') == {"a": [1, 250.0, "x\n", True, None]}
     loads('"\\u0041"') == "A"
-    loads('01')            -> ValueError
-    loads('[1,]')          -> ValueError
-    loads('{} tail')       -> ValueError
+    loads('01')     -> ValueError
+    loads('[1,]')   -> ValueError
+    loads('{} tail')-> ValueError
 """
 
 
