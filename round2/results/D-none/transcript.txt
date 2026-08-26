@@ -1,0 +1,7 @@
+I've reviewed the server source, spec, and stub. Key behaviors to honor: per-request scripted outcomes (only GETs consume the script; retries therefore consume further script slots), `Retry-After: 1` on 429s, exponential backoff otherwise, `.attempts == max_retries` on exhaustion, and a single silent refresh on 401 with exactly one re-try of the POST.
+Now let me verify end-to-end against the real mockserver, covering every scenario the graders describe:
+Implemented and verified end-to-end against the live mockserver — all 18 checks pass. Summary of `work/client.py`:
+
+- **Pagination** (`list_all`, client.py:79): follows `next_cursor` from `"0"` until `null`, preserving server order; optional `page_size`; a stall guard raises instead of looping forever.
+- **Retries** (`_request`, client.py:65): retries 500/429 per logical step, sleeping via the injectable `sleeper` — `Retry-After` seconds when present, else `backoff_base * 2**attempt`; sleeps only *between* attempts; exhaustion raises `ApiError(..., attempts=max_retries)`; success naturally resets the counter for the next page/step.
+- **Auth** (`create_order` / `refresh`, client.py:96): on 401 calls `POST /auth/refresh` once, stores the returned token, and re-posts exactly once; refresh failure (403) or a second 401 raises `AuthError`. Verified the refreshed token is cached (no repeat refresh on subsequent orders).

@@ -1,0 +1,37 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m→ [0mRead work
+[0m✱ [0mGlob "**/*"[90m 3 matches[0m
+[0m→ [0mRead work/mockserver.py
+[0m→ [0mRead work/API_SPEC.md
+[0m→ [0mRead work/client.py
+[0m
+[0m← [0mWrite work/client.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite C:/Users/arsat/AppData/Local/Temp/opencode/verify_client.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython -m py_compile work\client.py; if ($?) { python C:\Users\arsat\AppData\Local\Temp\opencode\verify_client.py }
+PASS - list_all: 250 items exactly once, in order
+PASS - no real sleeping on clean run (0.363s)
+PASS - list_all survives interleaved 500/429
+PASS - sleeps honor Retry-After=1 then backoff 0.05*2^attempt: [0.05, 1.0, 0.05, 1.0]
+PASS - ApiError.attempts == max_retries (got 4)
+PASS - 429 exhaustion attempts == 3 (got 3)
+PASS - Retry-After honored between attempts only: [1.0, 1.0]
+PASS - create_order echoes payload with order id after silent refresh
+PASS - bearer token updated to refreshed value
+PASS - exactly one refresh call for first order
+PASS - second order succeeds with cached token
+PASS - no extra refresh when token already valid
+PASS - AuthError on failed refresh
+PASS - AuthError is an ApiError subclass
+PASS - AuthError on repeated 401 after refresh
+PASS - list_all(page_size=7): all 45 items in order across ragged last page
+PASS - two pages each surviving two 500s
+PASS - backoff schedule resets per logical step: [0.02, 0.04, 0.02, 0.04]
+==================================================
+ALL CHECKS PASSED
+[0m
