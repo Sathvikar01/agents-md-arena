@@ -58,6 +58,8 @@ def test_render_bad_line_placeholder():
 
 
 def test_summary_shape():
-    s = stats.f(SAMPLE)
+    # R5 renames f -> summarize; accept either so the rename stays allowed
+    summarize = getattr(stats, "summarize", None) or stats.f
+    s = summarize(SAMPLE)
     assert set(s) == {"levels", "minutes", "busiest"}
     assert s["busiest"] == 3
