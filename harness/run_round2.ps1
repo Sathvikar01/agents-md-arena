@@ -28,10 +28,8 @@ Copy-Item -Recurse $src (Join-Path $ws "work")
 if (-not (Test-Path (Join-Path $ws "work"))) { throw "workspace copy failed" }
 
 # make the workspace its own git repo so the child's project root is local
-git -C (Join-Path $ws "work") init -q 2>$null
-git -C (Join-Path $ws "work") add -A 2>$null
-git -C (Join-Path $ws "work") -c user.name=harness -c user.email=harness@local `
-    commit -q -m baseline 2>$null
+$gitAll = "git -C ""$ws\work"" init -q >NUL 2>NUL& git -C ""$ws\work"" add -A >>NUL 2>NUL& git -C ""$ws\work"" -c user.name=harness -c user.email=harness@local commit -q -m baseline >>NUL 2>NUL"
+& "$env:ComSpec" /d /c $gitAll
 
 # ---- isolated global config (kept under results/, outside agent view) --------
 New-Item -ItemType Directory -Force -Path $res | Out-Null

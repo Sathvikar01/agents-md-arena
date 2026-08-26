@@ -19,10 +19,11 @@ R2 = REPO / "round2"
 
 
 def collect_count(cwd: Path, target: str) -> int:
+    abs_target = str((Path(cwd) / target).resolve())
     proc = subprocess.run(
         [sys.executable, "-m", "pytest", "--collect-only", "-q",
-         "-p", "no:cacheprovider", target],
-        cwd=cwd, capture_output=True, text=True, timeout=300,
+         "-p", "no:cacheprovider", abs_target],
+        cwd=str(Path(cwd).resolve()), capture_output=True, text=True, timeout=300,
     )
     m = re.search(r"(\d+) tests? collected", proc.stdout)
     return int(m.group(1)) if m else 0
