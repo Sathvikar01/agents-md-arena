@@ -1,0 +1,28 @@
+I've reviewed all sources, tests, and both REFACTORS.md files. Let me set up a task list and establish a baseline.
+Baseline run:
+All green at baseline (10 + 12 passed). Now implementing the logalyzer directives.
+logalyzer suite passes after refactor (10 passed). Marking those complete and moving to orders_app.
+`legacy_utils` is imported nowhere — safe to delete. Writing all orders_app refactors now (taxes.py new, store.py OrderStore, main.py split, pricing.py discount_rate, delete legacy_utils.py):
+All orders files written and legacy_utils.py deleted (Test-Path returns False). Running the suite plus directive-verification greps:
+`rg` isn't available; using the Grep tool for directive verification instead:
+All directive greps verified clean (only intended sites remain). Final full verification — both suites plus a diff review:
+Both suites pass and the `ORDERS` global is fully gone. Cleaning up stray `__pycache__` artifacts and doing a final review of the diff:
+All directives in both REFACTORS.md files are complete, with test files untouched and behavior preserved exactly (same receipt strings, error messages, record shapes, and float arithmetic — discount multipliers kept as original literals to stay bit-identical).
+
+**logalyzer_app** (10 passed)
+- R1: `report.py` now uses `parser.parse_line`; `split("|")` appears only in parser.py ✓
+- R2: new `consts.py` with `MINUTE_SECONDS = 60`, used in stats; no bare `60` left in stats.py ✓
+- R3: `LogStats` class with `levels()`/`minutes()`; module functions delegate via temporary instance ✓
+- R4: `analyze_v2` deleted ✓
+- R5: `f` renamed to `summarize`; no `def f` remains ✓
+- R6: `parser.py` uses explicit `maxsplit=2` ✓
+
+**orders_app** (12 passed)
+- R1: new `taxes.py` (`TAX_RATE = 0.08`, `tax()`); main.py and pricing.py use it; `0.08` only in taxes.py ✓
+- R2: `ORDERS` global eliminated; `OrderStore` class + shared `order_store` instance; module-level delegates keep existing callers working ✓
+- R3: `process_order` split into `validate_order`, `price_order` (returns subtotal/discount/tax/total dict), slim orchestrator — all in main.py ✓
+- R4: `legacy_utils.py` deleted ✓
+- R5: public `pricing.discount_rate()` extracted; `apply_discounts` calls it; thresholds unchanged ✓
+- R6: full type hints on all public functions in main.py, pricing.py, store.py, taxes.py ✓
+
+Final suite results (run from work/): `apps/logalyzer_app`: **10 passed**, `apps/orders_app`: **12 passed**.
