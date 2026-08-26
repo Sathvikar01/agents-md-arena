@@ -1,0 +1,36 @@
+{
+  "A": {
+    "tasks": {
+      "A1-jsonlite": 0,
+      "A2-cronlite": 0,
+      "A3-ttlcache": 0,
+      "A4-tokenbucket": 0,
+      "A5-intervals": 0,
+      "A6-roman": 0,
+      "A7-globber": 0,
+      "A8-semver": 0
+    }
+  },
+  "B": {
+    "apps": {
+      "logalyzer_app": {
+        "char_files": {
+          "test_behavior_logalyzer.py": "e98312bfc26678d444541bfd3d7e410297d411d4172aabc5997e9a22697f6a0c"
+        },
+        "n_char_tests": 10,
+        "n_struct_checks": 8
+      },
+      "orders_app": {
+        "char_files": {
+          "test_behavior_orders.py": "f200d00d5e8b1f917c5df87794eb05bb6f0b41778f0ad9b1b0ba8ea3119baaee"
+        },
+        "n_char_tests": 12,
+        "n_struct_checks": 8
+      }
+    }
+  },
+  "C": {
+    "n_questions": 15
+  },
+  "D": {}
+}
