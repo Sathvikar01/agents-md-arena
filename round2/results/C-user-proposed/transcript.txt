@@ -1,0 +1,13 @@
+Database built. Key edge case found: 2 paid orders lost ALL their items (generator deleted product 18/19 lines), which matters for `q06` — SQL semantics (`AVG` over per-order `SUM`, NULL skipped) is the natural reading of "an order's value is SUM(qty*unit_price) of its items". Now implementing:
+Now `answers.py` (the task text references it; stubs actually live in `questions.py`, so I keep one source of truth and re-export):
+Checker bug (my reference dict iterates ids, not names) — fixing the script:
+Only failure is a bug in my checker (used customer names for q07 instead of product names). Fixing and re-running:
+All checks pass. Final syntax/lint verification:
+Done. All 15 functions are implemented in `work/questions.py` (where the stubs actually live), with `work/answers.py` re-exporting them since the task referenced that filename. Every query was cross-validated against an independent pure-Python aggregation — 16/16 checks match.
+
+Key contract details handled:
+- **q02/q04/q12**: order by the *rounded* revenue (`ORDER BY revenue DESC`) with the specified tie-breaks; verified rounded vs unrounded ordering is identical here anyway.
+- **q06**: per-order `SUM(qty*unit_price)` averaged, then rounded. Note: 2 paid orders lost all items to the generator's product-18/19 deletion; SQL semantics (SUM of empty set = NULL, AVG skips NULL) excludes them → `1592.12` (vs `1557.13` if counted as zero).
+- **q09**: no rounding (docstring omits it, unlike other questions), tie-break by lowest order_id implemented though no tie exists at the max.
+- **q08/q05/q07**: LEFT JOIN + `COUNT(o.id)`/`IS NULL` so zeros are included correctly.
+- **q10**: `100.0 *` forces float division; **q13** uses `LIKE 'A%'`; **q15** uses `COUNT(DISTINCT product_id)` with `HAVING >= 2`.

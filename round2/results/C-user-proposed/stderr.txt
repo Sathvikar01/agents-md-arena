@@ -1,0 +1,701 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m→ [0mRead work
+[0m✱ [0mGlob "work/**/*"[90m 2 matches[0m
+[0m→ [0mRead work/db_generator.py
+[0m→ [0mRead work/questions.py
+[0m
+[0m# [0mTodos
+[•] Run db_generator.py to build ecommerce.db
+[ ] Implement q01-q15 in questions.py
+[ ] Create answers.py (task references answers.py)
+[ ] Verify outputs with printed sanity checks + Python cross-validation
+[0m
+[0m$ [0mpython db_generator.py; python -c "import sqlite3; print(sqlite3.sqlite_version)"
+built ecommerce.db
+3.45.1
+[0m
+[0m$ [0mpython -c "
+import sqlite3
+conn = sqlite3.connect('ecommerce.db')
+print('statuses:', conn.execute('SELECT status, COUNT(*) FROM orders GROUP BY status').fetchall())
+print('date range:', conn.execute('SELECT MIN(created_at), MAX(created_at) FROM orders').fetchall())
+print('paid w/o items:', conn.execute('SELECT COUNT(*) FROM orders o WHERE o.status=\'paid\' AND NOT EXISTS(SELECT 1 FROM order_items oi WHERE oi.order_id=o.id)').fetchall())
+print('orders total/items:', conn.execute('SELECT (SELECT COUNT(*) FROM orders), (SELECT COUNT(*) FROM order_items)').fetchall())
+print('never-ordered products:', conn.execute('SELECT id,name FROM products p WHERE NOT EXISTS(SELECT 1 FROM order_items oi WHERE oi.product_id=p.id)').fetchall())
+"
+statuses: [('cancelled', 29), ('paid', 91), ('pending', 20)]
+date range: [('2026-01-01 02:29:00', '2026-06-29 12:26:00')]
+paid w/o items: [(2,)]
+orders total/items: [(140, 302)]
+never-ordered products: [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')]
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -16,9 +16,11 @@
+     """All customers from country 'DE'.
+ 
+     Return (id, name), any order.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        "SELECT id, name FROM customers WHERE country = 'DE'"
++    ).fetchall()
+ 
+ 
+ def q02(conn):
+     """Top 3 products by total revenue from PAID orders.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -25,12 +25,23 @@
+ def q02(conn):
+     """Top 3 products by total revenue from PAID orders.
+ 
+     Revenue per product = SUM(qty * unit_price) over order_items of paid
+-    orders, ROUNDED to 2 decimals. Return (product_id, revenue),
++    orders, ROUNDED to 2 decimals.     Return (product_id, revenue),
+     ordered by revenue DESC; ties by product_id ASC.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT oi.product_id,
++               ROUND(SUM(oi.qty * oi.unit_price), 2) AS revenue
++        FROM order_items AS oi
++        JOIN orders AS o ON o.id = oi.order_id
++        WHERE o.status = 'paid'
++        GROUP BY oi.product_id
++        ORDER BY revenue DESC, oi.product_id ASC
++        LIMIT 3
++        """
++    ).fetchall()
+ 
+ 
+ def q03(conn):
+     """Number of orders per status. Return (status, count), any order."""
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -44,9 +44,11 @@
+ 
+ 
+ def q03(conn):
+     """Number of orders per status. Return (status, count), any order."""
+-    raise NotImplementedError
++    return conn.execute(
++        "SELECT status, COUNT(*) FROM orders GROUP BY status"
++    ).fetchall()
+ 
+ 
+ def q04(conn):
+     """Monthly revenue of PAID orders.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -55,9 +55,19 @@
+ 
+     Month key = strftime '%Y-%m' of created_at. Revenue rounded 2 decimals.
+     Return (month, revenue) ordered by month ASC.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT strftime('%Y-%m', o.created_at) AS month,
++               ROUND(SUM(oi.qty * oi.unit_price), 2) AS revenue
++        FROM orders AS o
++        JOIN order_items AS oi ON oi.order_id = o.id
++        WHERE o.status = 'paid'
++        GROUP BY month
++        ORDER BY month ASC
++        """
++    ).fetchall()
+ 
+ 
+ def q05(conn):
+     """Customers who have NEVER placed an order.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -73,9 +73,17 @@
+     """Customers who have NEVER placed an order.
+ 
+     Return (id, name) ordered by name ASC, then id ASC.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT c.id, c.name
++        FROM customers AS c
++        LEFT JOIN orders AS o ON o.customer_id = c.id
++        WHERE o.id IS NULL
++        ORDER BY c.name ASC, c.id ASC
++        """
++    ).fetchall()
+ 
+ 
+ def q06(conn):
+     """Average TOTAL value of a paid order, where an order's value is
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -89,9 +89,20 @@
+     """Average TOTAL value of a paid order, where an order's value is
+     SUM(qty*unit_price) of its items. Round the final average to 2 decimals.
+     Return one row: (avg_value,).
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT ROUND(AVG(t.order_value), 2)
++        FROM (
++            SELECT SUM(oi.qty * oi.unit_price) AS order_value
++            FROM orders AS o
++            JOIN order_items AS oi ON oi.order_id = o.id
++            WHERE o.status = 'paid'
++            GROUP BY o.id
++        ) AS t
++        """
++    ).fetchall()
+ 
+ 
+ def q07(conn):
+     """Products that were never part of any order.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -107,9 +107,17 @@
+ def q07(conn):
+     """Products that were never part of any order.
+     Return (id, name) ordered by id ASC.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT p.id, p.name
++        FROM products AS p
++        LEFT JOIN order_items AS oi ON oi.product_id = p.id
++        WHERE oi.order_id IS NULL
++        ORDER BY p.id ASC
++        """
++    ).fetchall()
+ 
+ 
+ def q08(conn):
+     """Per-customer count of PAID orders, INCLUDING customers with zero.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -122,9 +122,17 @@
+ def q08(conn):
+     """Per-customer count of PAID orders, INCLUDING customers with zero.
+     Return (customer_id, cnt) ordered by customer_id ASC.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT c.id, COUNT(o.id) AS cnt
++        FROM customers AS c
++        LEFT JOIN orders AS o ON o.customer_id = c.id AND o.status = 'paid'
++        GROUP BY c.id
++        ORDER BY c.id ASC
++        """
++    ).fetchall()
+ 
+ 
+ def q09(conn):
+     """The single largest line item ever (paid orders only).
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -148,9 +148,16 @@
+     """Share of orders that are NOT paid (pending or cancelled), as a
+     percentage of ALL orders: 100.0 * not_paid / total, rounded 2 decimals.
+     Return one row: (share,).
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT ROUND(
++                   100.0 * SUM(CASE WHEN status <> 'paid' THEN 1 ELSE 0 END)
++                   / COUNT(*), 2)
++        FROM orders
++        """
++    ).fetchall()
+ 
+ 
+ def q11(conn):
+     """Distinct countries, alphabetical. Return (country,) rows."""
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -140,9 +140,19 @@
+     Line value = qty * unit_price. Return exactly one row
+     (order_id, product_id, line_value) for the maximum; ties broken by
+     LOWEST order_id.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT oi.order_id, oi.product_id,
++               oi.qty * oi.unit_price AS line_value
++        FROM order_items AS oi
++        JOIN orders AS o ON o.id = oi.order_id
++        WHERE o.status = 'paid'
++        ORDER BY line_value DESC, oi.order_id ASC
++        LIMIT 1
++        """
++    ).fetchall()
+ 
+ 
+ def q10(conn):
+     """Share of orders that are NOT paid (pending or cancelled), as a
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -170,9 +170,11 @@
+ 
+ 
+ def q11(conn):
+     """Distinct countries, alphabetical. Return (country,) rows."""
+-    raise NotImplementedError
++    return conn.execute(
++        "SELECT DISTINCT country FROM customers ORDER BY country ASC"
++    ).fetchall()
+ 
+ 
+ def q12(conn):
+     """Revenue by category for PAID orders in June 2026 only.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -181,9 +181,21 @@
+ 
+     Return (category, revenue-rounded-2) ordered by revenue DESC,
+     ties by category ASC. Include every category that has such revenue.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT p.category,
++               ROUND(SUM(oi.qty * oi.unit_price), 2) AS revenue
++        FROM order_items AS oi
++        JOIN orders AS o ON o.id = oi.order_id
++        JOIN products AS p ON p.id = oi.product_id
++        WHERE o.status = 'paid'
++          AND strftime('%Y-%m', o.created_at) = '2026-06'
++        GROUP BY p.category
++        ORDER BY revenue DESC, p.category ASC
++        """
++    ).fetchall()
+ 
+ 
+ def q13(conn):
+     """Customers whose name starts with 'A'.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -207,9 +207,16 @@
+ def q14(conn):
+     """Price range per category: minimum and maximum product price.
+     Return (category, min_price, max_price) ordered by category ASC.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        """
++        SELECT category, MIN(price) AS min_price, MAX(price) AS max_price
++        FROM products
++        GROUP BY category
++        ORDER BY category ASC
++        """
++    ).fetchall()
+ 
+ 
+ def q15(conn):
+     """Orders containing at least 2 DISTINCT products.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -200,9 +200,11 @@
+ def q13(conn):
+     """Customers whose name starts with 'A'.
+     Return (name,) ordered by name ASC.
+     """
+-    raise NotImplementedError
++    return conn.execute(
++        "SELECT name FROM customers WHERE name LIKE 'A%' ORDER BY name ASC"
++    ).fetchall()
+ 
+ 
+ def q14(conn):
+     """Price range per category: minimum and maximum product price.
+
+[0m
+[0m← [0mEdit work/questions.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-user-proposed\work\questions.py
+@@ -225,5 +225,13 @@
+ 
+ Return (order_id, distinct_products) ordered by distinct_products DESC,
+ then order_id ASC.
+ """
+-raise NotImplementedError
++return conn.execute(
++    """
++    SELECT order_id, COUNT(DISTINCT product_id) AS distinct_products
++    FROM order_items
++    GROUP BY order_id
++    HAVING COUNT(DISTINCT product_id) >= 2
++    ORDER BY distinct_products DESC, order_id ASC
++    """
++).fetchall()
+
+[0m
+[0m← [0mWrite work/answers.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite C:/Users/arsat/AppData/Local/Temp/opencode/check_answers.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
+Traceback (most recent call last):
+  File "C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py", line 98, in <module>
+    exp_q13 = sorted(n for n in name_by_id if n.startswith("A"))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py", line 98, in <genexpr>
+    exp_q13 = sorted(n for n in name_by_id if n.startswith("A"))
+                                              ^^^^^^^^^^^^
+AttributeError: 'int' object has no attribute 'startswith'
+[0m
+[0m← [0mEdit C:/Users/arsat/AppData/Local/Temp/opencode/check_answers.py
+Index: C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
+===================================================================
+--- C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
++++ C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
+@@ -94,9 +94,9 @@
+         cat_rev[cat_of[pid]] += qty * up
+ exp_q12 = sorted(((c, round(v, 2)) for c, v in cat_rev.items()),
+                  key=lambda t: (-t[1], t[0]))
+ 
+-exp_q13 = sorted(n for n in name_by_id if n.startswith("A"))
++exp_q13 = sorted(n for n in id_by_name if n.startswith("A"))
+ 
+ price_by_cat = defaultdict(list)
+ for pid_, cat, price in conn.execute("SELECT id,category,price FROM products"):
+     price_by_cat[cat].append(price)
+
+[0m
+[0m$ [0mpython C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
+=== outputs ===
+q01 (4 rows):
+    (2, 'Ben Berhoff')
+    (10, 'Jonas Jerhoff')
+    (11, 'Kara Kerhoff')
+    (20, 'Tara Terhoff')
+q02 (3 rows):
+    (16, 15212.16)
+    (3, 12954.44)
+    (4, 11851.32)
+q03 (3 rows):
+    ('cancelled', 29)
+    ('paid', 91)
+    ('pending', 20)
+q04 (6 rows):
+    ('2026-01', 28579.77)
+    ('2026-02', 19304.49)
+    ('2026-03', 19016.82)
+    ('2026-04', 27821.3)
+    ('2026-05', 23875.56)
+    ('2026-06', 23100.45)
+q05 (1 rows):
+    (2, 'Ben Berhoff')
+q06 (1 rows):
+    (1592.12,)
+q07 (2 rows):
+    (18, 'HDD 4TB')
+    (19, 'MicroSD 256GB')
+q08 (30 rows):
+    (1, 6)
+    (2, 0)
+    (3, 1)
+    (4, 2)
+    (5, 1)
+    (6, 10)
+    (7, 5)
+    (8, 5)
+    (9, 3)
+    (10, 1)
+    (11, 2)
+    (12, 5)
+    (13, 2)
+    (14, 3)
+    (15, 4)
+    (16, 1)
+    (17, 2)
+    (18, 2)
+    (19, 2)
+    (20, 3)
+    (21, 2)
+    (22, 4)
+    (23, 2)
+    (24, 5)
+    (25, 1)
+    (26, 4)
+    (27, 6)
+    (28, 5)
+    (29, 0)
+    (30, 2)
+q09 (1 rows):
+    (3, 10, 1439.6399999999999)
+q10 (1 rows):
+    (35.0,)
+q11 (5 rows):
+    ('DE',)
+    ('FR',)
+    ('GB',)
+    ('NL',)
+    ('US',)
+q12 (5 rows):
+    ('displays', 8717.27)
+    ('peripherals', 4921.15)
+    ('audio', 4337.48)
+    ('storage', 4153.5)
+    ('network', 971.05)
+q13 (5 rows):
+    ('Amelie Aerhoff',)
+    ('Anke Derhoff',)
+    ('Anna Aerhoff',)
+    ('Anton Berhoff',)
+    ('Astrid Cerhoff',)
+q14 (5 rows):
+    ('audio', 224.58, 455.82)
+    ('displays', 312.41, 478.92)
+    ('network', 179.65, 479.88)
+    ('peripherals', 202.81, 365.73)
+    ('storage', 11.75, 475.38)
+q15 (89 rows):
+    (11, 4)
+    (14, 4)
+    (21, 4)
+    (26, 4)
+    (29, 4)
+    (40, 4)
+    (46, 4)
+    (54, 4)
+    (55, 4)
+    (63, 4)
+    (71, 4)
+    (72, 4)
+    (111, 4)
+    (114, 4)
+    (1, 3)
+    (9, 3)
+    (17, 3)
+    (18, 3)
+    (19, 3)
+    (28, 3)
+    (31, 3)
+    (33, 3)
+    (34, 3)
+    (37, 3)
+    (38, 3)
+    (47, 3)
+    (49, 3)
+    (51, 3)
+    (59, 3)
+    (74, 3)
+    (76, 3)
+    (78, 3)
+    (79, 3)
+    (84, 3)
+    (85, 3)
+    (88, 3)
+    (93, 3)
+    (97, 3)
+    (102, 3)
+    (104, 3)
+    (106, 3)
+    (107, 3)
+    (110, 3)
+    (115, 3)
+    (121, 3)
+    (122, 3)
+    (123, 3)
+    (129, 3)
+    (131, 3)
+    (133, 3)
+    (136, 3)
+    (140, 3)
+    (3, 2)
+    (4, 2)
+    (8, 2)
+    (10, 2)
+    (15, 2)
+    (24, 2)
+    (25, 2)
+    (30, 2)
+    (32, 2)
+    (41, 2)
+    (42, 2)
+    (43, 2)
+    (44, 2)
+    (58, 2)
+    (61, 2)
+    (62, 2)
+    (67, 2)
+    (70, 2)
+    (73, 2)
+    (80, 2)
+    (81, 2)
+    (82, 2)
+    (94, 2)
+    (96, 2)
+    (98, 2)
+    (100, 2)
+    (103, 2)
+    (108, 2)
+    (109, 2)
+    (112, 2)
+    (116, 2)
+    (118, 2)
+    (124, 2)
+    (125, 2)
+    (126, 2)
+    (137, 2)
+    (138, 2)
+
+=== checks ===
+[OK ] q01 set equality (order-free)
+[OK ] q03 covers all orders
+[OK ] q02 matches python reference
+[OK ] q03 matches python reference
+[OK ] q04 matches python reference
+[OK ] q05 matches python reference
+[OK ] q06 matches python reference
+[FAIL] q07 matches python reference
+[OK ] q08 matches python reference
+[OK ] q09 matches python reference
+[OK ] q10 matches python reference
+[OK ] q11 matches python reference
+[OK ] q12 matches python reference
+[OK ] q13 matches python reference
+[OK ] q14 matches python reference
+[OK ] q15 matches python reference
+
+q06 note: excl-empty=1592.12 incl-empty-as-0=1557.13
+q06 denominators: paid orders=91, paid w/ items=89
+q09 max line ties at 1439.6399999999999: [(3, 10, 1439.6399999999999)]
+q02 rounded-order vs unrounded-order identical: True
+[OK ] answers.py re-export works
+
+FAILURES: [('q07 matches python reference', [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')], [(18, 'Rita Rerhoff'), (19, 'Sven Serhoff')])]
+[0m
+[0m← [0mEdit C:/Users/arsat/AppData/Local/Temp/opencode/check_answers.py
+Index: C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
+===================================================================
+--- C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
++++ C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py
+@@ -68,9 +68,10 @@
+ exp_q06_incl = round(sum(vals_incl_zero) / len(vals_incl_zero), 2)
+ 
+ prod_ids = {p[0] for p in conn.execute("SELECT id FROM products").fetchall()}
+ used = {it[1] for it in items}
+-exp_q07 = [(i, name_by_id.get(i)) for i in sorted(prod_ids - used)]
++prod_name = dict(conn.execute("SELECT id,name FROM products"))
++exp_q07 = [(i, prod_name[i]) for i in sorted(prod_ids - used)]
+ 
+ paid_cnt = defaultdict(int)
+ for o in orders:
+     if o[3] == "paid":
+
+[0m
+[0m$ [0mpython C:\Users\arsat\AppData\Local\Temp\opencode\check_answers.py 2>&1 | Select-String -Pattern "OK |FAIL|q06 note|q09 max|identical|FAILURES"
+[OK ] q01 set equality (order-free)
+[OK ] q03 covers all orders
+[OK ] q02 matches python reference
+[OK ] q03 matches python reference
+[OK ] q04 matches python reference
+[OK ] q05 matches python reference
+[OK ] q06 matches python reference
+[OK ] q07 matches python reference
+[OK ] q08 matches python reference
+[OK ] q09 matches python reference
+[OK ] q10 matches python reference
+[OK ] q11 matches python reference
+[OK ] q12 matches python reference
+[OK ] q13 matches python reference
+[OK ] q14 matches python reference
+[OK ] q15 matches python reference
+q06 note: excl-empty=1592.12 incl-empty-as-0=1557.13
+q09 max line ties at 1439.6399999999999: [(3, 10, 1439.6399999999999)]
+q02 rounded-order vs unrounded-order identical: True
+[OK ] answers.py re-export works
+FAILURES: none
+[0m
+[0m$ [0mpython -m py_compile questions.py answers.py; if ($?) { "compile OK" }
+compile OK
+[0m
+[0m# [0mTodos
+[✓] Run db_generator.py to build ecommerce.db
+[✓] Implement q01-q15 in questions.py
+[✓] Create answers.py (task references answers.py)
+[✓] Verify outputs with printed sanity checks + Python cross-validation
+[0m
