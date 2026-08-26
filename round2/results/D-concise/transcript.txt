@@ -1,0 +1,11 @@
+I've studied the spec and server source. Key facts driving the implementation: every GET consumes one script entry (so each retry is a new outcome), 429 carries `Retry-After: 1` while 500 has no header, cursor is a string index, and refresh swaps in `"tok-live"`. Now implementing:
+Now verifying end-to-end against the real server with a scenario script covering every behavior:
+Found the bug: I never sent the `Authorization: Bearer <token>` header, so every order POST was 401. Fixing by adding it to each request (read per-attempt so post-refresh token is used):
+Implemented in work/client.py:
+
+- **`list_all()`** — cursor pagination until `next_cursor` is null, preserving server order; optional `page_size` passthrough.
+- **Retry core (`_send_until_stable`)** — retries 500/429 up to `max_retries` consecutive attempts per logical step; sleeps `float(Retry-After)` when present else `backoff_base * 2**attempt`, always via the injected `sleeper`; success resets the counter; exhaustion raises `ApiError(..., attempts=max_retries)`.
+- **`create_order()`** — POST with `Authorization: Bearer <token>` + JSON body; on 401 calls `refresh()` once and retries exactly once more; second 401 → `AuthError`.
+- **`refresh()`** — POST `/auth/refresh`; non-200 (403) → `AuthError`, otherwise stores returned token.
+
+Verified end-to-end against the live mockserver: 12/12 scenario checks pass (57-item pagination, interleaved 500→429 producing sleeps `[0.05, 1.0]`, exhaustion raising `ApiError(attempts=5)` after backoff `[0.05, 0.1, 0.2, 0.4]`, stale-token silent refresh exactly once, 403-refresh and repeat-401 both raising `AuthError`, and per-step budget reset). One bug was caught and fixed during verification: the bearer header was initially missing from order POSTs.
