@@ -1,0 +1,23 @@
+Running baseline tests to confirm current state:
+Baseline green (12 + 10 passed). Now implementing orders_app refactors.
+Now R4 — delete `legacy_utils.py` (first verifying nothing imports it):
+orders_app green (12 passed). Now logalyzer_app:
+Both suites pass. Final verification of all directives plus full test run:
+22 passed. `rg` isn't installed — using the Grep tool for the directive checks:
+All directives complete and verified.
+
+**orders_app** (12 passed)
+- **R1**: New `taxes.py` (`TAX_RATE = 0.08`, `tax(amount)`); used by `main.py` and `pricing.calc_tax`. Grep confirms `0.08` exists only in `taxes.py` (plus pre-existing hits inside the immutable test file).
+- **R2**: Global `ORDERS` dict removed; new `OrderStore` class + shared `order_store` instance in store.py. Module-level `save_order`/`get_order`/`clear` now delegate to it, so existing callers (tests) work unchanged.
+- **R3**: `process_order` split into `validate_order`, `price_order` (returns subtotal/discount/tax/total dict), and a slim orchestrator that persists and formats — all in main.py, byte-identical receipt/persisted-record output.
+- **R4**: `legacy_utils.py` deleted (`Test-Path` → False; nothing imported it).
+- **R5**: Public `discount_rate(subtotal)` extracted; `apply_discounts` calls it; multipliers kept literal (`0.90`/`0.95`) so float results are bit-for-bit unchanged.
+- **R6**: Type hints on every public signature across main.py, pricing.py, store.py, taxes.py.
+
+**logalyzer_app** (10 passed)
+- **R1**: report.format_entry now uses `parser.parse_line`; `split("|")` appears only in parser.py.
+- **R2**: `consts.py` with `MINUTE_SECONDS = 60`, used in `LogStats.minutes()`; stats.py contains no bare `60`.
+- **R3**: `LogStats` class wraps raw lines with `levels()`/`minutes()`; `level_counts`/`minute_counts` remain and delegate to a temporary instance.
+- **R4**: `analyze_v2` deleted. **R5**: `f` renamed `summarize`, no `def f(` remains. **R6**: `split("|", maxsplit=2)` made explicit.
+
+**Final combined run:** `python -m pytest apps/orders_app apps/logalyzer_app -q` → **22 passed**, zero test files modified.

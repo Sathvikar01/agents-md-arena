@@ -1,0 +1,38 @@
+{
+  "mode": "B",
+  "score_pct": 100.0,
+  "behavior_pct": 100.0,
+  "structural_pct": 100.0,
+  "per_app": {
+    "logalyzer_app": {
+      "behavior_passed": "10/10",
+      "structural_passed": "8/8",
+      "tampered": false,
+      "detail": {
+        "report_uses_parser": true,
+        "consts_module": true,
+        "no_bare_60_in_stats": true,
+        "logstats_class": true,
+        "delegation_kept": true,
+        "analyze_v2_deleted": true,
+        "summarize_renamed": true,
+        "maxsplit_used": true
+      }
+    },
+    "orders_app": {
+      "behavior_passed": "12/12",
+      "structural_passed": "8/8",
+      "tampered": false,
+      "detail": {
+        "taxes_module": true,
+        "no_orders_global": true,
+        "order_store_class": true,
+        "wrappers_kept": true,
+        "split_functions": true,
+        "legacy_utils_gone": true,
+        "discount_rate": true,
+        "type_hints": true
+      }
+    }
+  }
+}
