@@ -1,0 +1,129 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m→ [0mRead work
+[0m→ [0mRead work/API_SPEC.md
+[0m→ [0mRead work/mockserver.py
+[0m→ [0mRead work/client.py
+[0m
+[0m# [0mTodos
+[•] Implement client.py (pagination, retries, refresh)
+[ ] Write end-to-end test harness against live mockserver
+[ ] Run harness covering all spec scenarios and fix issues
+[0m
+[0m← [0mWrite work/client.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite C:/Users/arsat/AppData/Local/Temp/opencode/test_client_e2e.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython C:\Users\arsat\AppData\Local\Temp\opencode\test_client_e2e.py
+PASS plain-57
+PASS interleaved-order
+PASS retry-after-honored
+PASS backoff-used
+PASS backoff-increasing
+  sleeps: [0.05, 1.0, 0.05, 1.0]
+PASS exhaustion-raises
+PASS exhaustion-attempts
+PASS exhaustion-is-apierror
+PASS exhaustion-sleeps
+PASS exhaustion-backoff-seq
+PASS 429-exhaustion-raises
+PASS 429-retry-after-every-time
+PASS reset-counter
+PASS stale-refresh-success
+PASS payload-echo
+PASS one-refresh
+PASS one-order
+PASS token-stored
+PASS second-order-no-refresh
+PASS valid-token-direct
+PASS no-refresh-needed
+PASS 403-autherror
+PASS 403-no-order
+PASS repeat-401-autherror
+FAIL repeat-401-one-refresh
+[0m
+[0m← [0mEdit C:/Users/arsat/AppData/Local/Temp/opencode/test_client_e2e.py
+Index: C:\Users\arsat\AppData\Local\Temp\opencode\test_client_e2e.py
+===================================================================
+--- C:\Users\arsat\AppData\Local\Temp\opencode\test_client_e2e.py
++++ C:\Users\arsat\AppData\Local\Temp\opencode\test_client_e2e.py
+@@ -148,19 +148,20 @@
+     check("403-no-order", h.state.orders_served == 0)
+ finally:
+     h.shutdown()
+ 
+-# 8. Repeated 401 after refresh -> AuthError
++# 8. Repeated 401 after a *successful* refresh -> AuthError
+ h = serve(script=[None])
+ try:
++    h.state.stale_tokens.add("tok-live")  # even refreshed token rejected
+     c = ApiClient(h.base_url, token="tok-stale", refresh_token="refresh-xyz")
+-    c.refresh = lambda: setattr(c, "token", "tok-stale")  # stays stale
+     try:
+         c.create_order({})
+         check("repeat-401-autherror", False, "no exception")
+     except AuthError:
+         check("repeat-401-autherror", True)
+-    check("repeat-401-one-refresh", h.state.refresh_count == 1)
++    check("repeat-401-one-refresh", h.state.refresh_count == 1,
++          f"refresh_count={h.state.refresh_count}")
+ finally:
+     h.shutdown()
+ 
+ # 9. Standalone refresh()
+
+[0m
+[0m$ [0mpython C:\Users\arsat\AppData\Local\Temp\opencode\test_client_e2e.py
+PASS plain-57
+PASS interleaved-order
+PASS retry-after-honored
+PASS backoff-used
+PASS backoff-increasing
+  sleeps: [0.05, 1.0, 0.05, 1.0]
+PASS exhaustion-raises
+PASS exhaustion-attempts
+PASS exhaustion-is-apierror
+PASS exhaustion-sleeps
+PASS exhaustion-backoff-seq
+PASS 429-exhaustion-raises
+PASS 429-retry-after-every-time
+PASS reset-counter
+PASS stale-refresh-success
+PASS payload-echo
+PASS one-refresh
+PASS one-order
+PASS token-stored
+PASS second-order-no-refresh
+PASS valid-token-direct
+PASS no-refresh-needed
+PASS 403-autherror
+PASS 403-no-order
+PASS repeat-401-autherror
+PASS repeat-401-one-refresh
+PASS standalone-refresh
+PASS size-empty
+PASS size-one-page
+PASS size-two-pages
+PASS size-many-pages
+PASS real-sleep-path
+
+ALL 31 CHECKS PASSED
+[0m
+[0m$ [0mgit status --short; git diff --stat
+M client.py
+?? __pycache__/
+warning: in the working copy of 'client.py', LF will be replaced by CRLF the next time Git touches it
+ client.py | 114 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 109 insertions(+), 5 deletions(-)
+[0m
+[0m$ [0mRemove-Item -Recurse -Force __pycache__
+(no output)
+[0m
+[0m# [0mTodos
+[✓] Implement client.py (pagination, retries, refresh)
+[✓] Write end-to-end test harness against live mockserver
+[✓] Run harness covering all spec scenarios and fix issues
+[0m

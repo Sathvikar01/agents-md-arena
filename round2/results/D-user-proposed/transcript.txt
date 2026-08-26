@@ -1,0 +1,10 @@
+Server behaviors confirmed: script consumed per GET (cycling), `Retry-After: 1` on 429, refresh returns `tok-live` or 403. Implementing the client:
+The failure is in my test harness, not the client — my stubbed `c.refresh` bypassed the server, so `refresh_count` was correctly 0. Let me fix scenario 8 to exercise the real refresh-then-still-401 path:
+All 31 checks pass. Final diff check:
+Done. Implemented all of `client.py` and verified end-to-end against the live `mockserver` (31/31 checks passed, harness in temp, no repo pollution).
+
+Implementation summary:
+- **`list_all()`** — cursor-following loop over `GET /items?cursor=`, extending in server order until `next_cursor` is null (verified with 0/20/21/57/250 items).
+- **Retries** (`_request`, client.py:82) — every logical step retries on 429/5xx: sleeps `Retry-After` seconds when the header is present (observed `1.0` sleeps), else `backoff_base * 2**(failures-1)`; raises `ApiError(..., attempts=max_retries)` after budget exhaustion; each new step starts a fresh counter (reset-on-success verified across pages).
+- **Auth flow** — `create_order()` retries once after a silent `refresh()` on 401; `refresh()` stores the returned token; 403 from refresh or a second 401 raises `AuthError`. Verified: stale→refresh→201 exactly one refresh call, valid-token path does zero refreshes.
+- Stdlib only; constructor contract unchanged; only transient statuses retry (201/200/401/403 return immediately).
