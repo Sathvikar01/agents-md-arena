@@ -1,0 +1,9 @@
+I need to fix a bug in the container-close logic (completed containers were never re-attached). Rewriting the main loop cleanly:
+Now A2-cronlite:
+A3-ttlcache:
+A4-tokenbucket:
+A5-intervals:
+A6-roman:
+A7-globber:
+A8-semver:
+Now let me write a thorough scratch sanity suite covering every docstring example plus edge cases:

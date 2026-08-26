@@ -39,13 +39,15 @@ def sha256(path: Path) -> str:
 
 def run_pytest(cwd: Path, targets: list[str]) -> dict:
     """Run pytest once; return {'collected','passed'} from junit."""
+    abs_targets = [str((Path(cwd) / t).resolve()) for t in targets]
     with tempfile.TemporaryDirectory() as tmp:
         junit = Path(tmp) / "report.xml"
         proc = subprocess.run(
-            [sys.executable, "-m", "pytest", *targets,
+            [sys.executable, "-m", "pytest", *abs_targets,
              "-q", "--tb=no", "-p", "no:cacheprovider",
              f"--junitxml={junit}"],
-            cwd=cwd, capture_output=True, text=True, timeout=900,
+            cwd=str(Path(cwd).resolve()), capture_output=True, text=True,
+            timeout=900,
         )
         out = (proc.stdout or "") + (proc.stderr or "")
         if not junit.exists():
@@ -73,12 +75,13 @@ def score_a(ws: Path, man: dict) -> dict:
             tampered.append(tid)
         else:
             with tempfile.TemporaryDirectory() as tmp:
-                shadow = Path(tmp) / "probe"
+                shadow = Path(tmp) / "probe" / tid
+                shadow.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copytree(tdir, shadow)
                 for f in (hidden_root / tid).glob("test_*.py"):
                     shutil.copy2(f, shadow / f.name)
                 # stub modules must not import agent scratch files; run in copy
-                r = run_pytest(shadow.parent, [f"probe/{tid}"])
+                r = run_pytest(shadow.parent, [tid])
             got = min(r["passed"], n_exp)
         per_task[tid] = {"expected": n_exp, "passed": got, "tampered": tid in tampered}
         total_exp += n_exp
