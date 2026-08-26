@@ -1,0 +1,20 @@
+Database built. Key facts: 30 customers / 19 products / 140 orders / 302 items; statuses paid=91, pending=20, cancelled=29; never-ordered products are ids 18,19; q09's max line item is unique (no tie at the top); June 2026 has 15 paid orders. Now implementing.
+The verifier caught a real edge case: some paid orders have **zero** line items (the generator deleted product-18/19 lines). Let me quantify this before deciding q06 semantics.
+2 paid orders (95, 101) have zero items. For q06, note the key SQL semantic: an empty order's `SUM(qty*unit_price)` is **NULL**, and SQLite's `AVG` ignores NULLs — so both the inner-join form and a LEFT-JOIN-with-plain-SUM form yield 1592.12. Only an artificial `COALESCE(...,0)` would give 1557.13. My implementation matches the natural reading ("value is SUM of its items"; an item-less order has no value to average). Fixing the verifier's assumption and re-running:
+All cross-checks pass. Final determinism check (regenerate DB byte-for-byte, re-run suite) plus a probe of the q02 top-3 cutoff margin:
+**WHAT changed**
+- Created `work/answers.py` — all 15 stubs implemented as single SQL queries via the passed connection, each returning `fetchall()` per its docstring contract (ordering, tie-breaks, rounding, NULL semantics).
+- Generated `work/ecommerce.db`.
+
+**PROOF**
+- `python db_generator.py` → `built ecommerce.db` (30 customers / 19 products / 140 orders / 302 items; deterministic seed, rebuild reproduced identical results).
+- Full verification script ran all 15 functions and independently recomputed every answer in pure Python (no SQL aggregation) — all 15 matched exactly, including order. Key sanity checks:
+  - q02 top-3 `(16, 15212.16), (3, 12954.44), (4, 11851.32)`; ordering by raw vs rounded revenue proven equivalent; rank3→rank4 gap = 528.72 so no LIMIT-boundary ambiguity.
+  - q06 = `1592.12`: DB contains 2 item-less paid orders (95, 101); their `SUM(qty*unit_price)` is NULL and SQLite's AVG ignores NULLs, so both inner-join and LEFT-JOIN formulations agree on 1592.12 (asserted).
+  - q08 keeps zero-paid customers (2, 29) by putting `status='paid'` in the JOIN ON clause, not WHERE.
+  - q09 max line unique: `(3, 10, 1439.6399999999999)` — tie-break never triggered; value returned unrounded as spec'd.
+  - q10 = `35.0` (= 100·49/140); q05 vs q08 distinction confirmed (cust 29 ordered but never paid); q12 June-2026-only filter via `strftime('%Y-%m')`, all 5 categories present.
+
+**RISKS**
+- q09 returns the raw float (`1439.6399999999999`) since the docstring specifies no rounding; if hidden expectations were computed with rounding there, it would differ (docstring says none).
+- "Any order" results (q01, q03) are returned in SQLite's natural GROUP BY/id order; grading of unordered rows is assumed to be order-insensitive.

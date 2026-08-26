@@ -1,0 +1,512 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m→ [0mRead work/db_generator.py
+[0m
+[0m$ [0mGet-ChildItem -Recurse work | Select-Object FullName
+FullName                                                                                             
+--------                                                                                             
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-tdd-rigorous\work\db_generator.py
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-tdd-rigorous\work\questions.py
+[0m
+[0m→ [0mRead work/questions.py
+[0m
+[0m# [0mTodos
+[•] Generate ecommerce.db and inspect schema/data
+[ ] Implement q01-q15 in answers.py
+[ ] Run all queries, print outputs, sanity-check counts/edge cases (q09 ties, q06 rounding, q12 boundary dates)
+[0m
+[0m$ [0mpython db_generator.py; python -c "import sqlite3; c=sqlite3.connect('ecommerce.db'); cur=c.cursor()
+for t in ['customers','products','orders','order_items']:
+    print(t, cur.execute(f'SELECT COUNT(*) FROM {t}').fetchone()[0])
+print('statuses', cur.execute('SELECT status, COUNT(*) FROM orders GROUP BY status').fetchall())
+print('countries', cur.execute('SELECT DISTINCT country FROM customers ORDER BY 1').fetchall())
+print('date range', cur.execute('SELECT MIN(created_at), MAX(created_at) FROM orders').fetchone())
+print('never ordered products', cur.execute('SELECT id,name FROM products WHERE id NOT IN (SELECT product_id FROM order_items)').fetchall())
+print('june paid orders', cur.execute(\"SELECT COUNT(*) FROM orders WHERE status='paid' AND strftime('%Y-%m',created_at)='2026-06'\").fetchone())
+print('cust with no orders', cur.execute('SELECT id,name FROM customers c WHERE NOT EXISTS(SELECT 1 FROM orders o WHERE o.customer_id=c.id)').fetchall())
+"
+At line:8 char:110
++ ... OUNT(*) FROM orders WHERE status='paid' AND strftime('%Y-%m',created_ ...
++                                                                  ~
+Missing expression after ','.
+At line:8 char:110
++ ... OM orders WHERE status='paid' AND strftime('%Y-%m',created_at)='2026- ...
++                                                        ~~~~~~~~~~
+Unexpected token 'created_at' in expression or statement.
+At line:8 char:110
++ ... OUNT(*) FROM orders WHERE status='paid' AND strftime('%Y-%m',created_ ...
++                                                                  ~
+Missing closing ')' in expression.
+At line:8 char:120
++ ... M orders WHERE status='paid' AND strftime('%Y-%m',created_at)='2026-0 ...
++                                                                 ~
+Unexpected token ')' in expression or statement.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : MissingExpressionAfterToken
+[0m
+[0m← [0mWrite work/_explore.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython db_generator.py; if ($?) { python _explore.py }
+built ecommerce.db
+customers 30
+products 19
+orders 140
+order_items 302
+statuses [('cancelled', 29), ('paid', 91), ('pending', 20)]
+countries [('DE',), ('FR',), ('GB',), ('NL',), ('US',)]
+date range ('2026-01-01 02:29:00', '2026-06-29 12:26:00')
+never ordered products [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')]
+june paid orders (15,)
+cust with no orders [(2, 'Ben Berhoff')]
+customers per country DE count (4,)
+top line items: [(3, 10, 1439.6399999999999), (19, 6, 1436.76), (50, 6, 1436.76), (140, 6, 1436.76), (26, 16, 1426.1399999999999), (55, 16, 1426.1399999999999)]
+[0m
+[0m← [0mWrite work/answers.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/_verify.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython _verify.py
+q01: 4 rows
+    (2, 'Ben Berhoff')
+    (10, 'Jonas Jerhoff')
+    (11, 'Kara Kerhoff')
+    (20, 'Tara Terhoff')
+q02: 3 rows
+    (16, 15212.16)
+    (3, 12954.44)
+    (4, 11851.32)
+q03: 3 rows
+    ('cancelled', 29)
+    ('paid', 91)
+    ('pending', 20)
+q04: 6 rows
+    ('2026-01', 28579.77)
+    ('2026-02', 19304.49)
+    ('2026-03', 19016.82)
+    ('2026-04', 27821.3)
+    ('2026-05', 23875.56)
+    ('2026-06', 23100.45)
+q05: 1 rows
+    (2, 'Ben Berhoff')
+q06: 1 rows
+    (1592.12,)
+q07: 2 rows
+    (18, 'HDD 4TB')
+    (19, 'MicroSD 256GB')
+q08: 30 rows
+    (1, 6)
+    (2, 0)
+    (3, 1)
+    (4, 2)
+    (5, 1)
+    (6, 10)
+    (7, 5)
+    (8, 5)
+    (9, 3)
+    (10, 1)
+    (11, 2)
+    (12, 5)
+    (13, 2)
+    (14, 3)
+    (15, 4)
+    (16, 1)
+    (17, 2)
+    (18, 2)
+    (19, 2)
+    (20, 3)
+    (21, 2)
+    (22, 4)
+    (23, 2)
+    (24, 5)
+    (25, 1)
+    (26, 4)
+    (27, 6)
+    (28, 5)
+    (29, 0)
+    (30, 2)
+q09: 1 rows
+    (3, 10, 1439.6399999999999)
+q10: 1 rows
+    (35.0,)
+q11: 5 rows
+    ('DE',)
+    ('FR',)
+    ('GB',)
+    ('NL',)
+    ('US',)
+q12: 5 rows
+    ('displays', 8717.27)
+    ('peripherals', 4921.15)
+    ('audio', 4337.48)
+    ('storage', 4153.5)
+    ('network', 971.05)
+q13: 5 rows
+    ('Amelie Aerhoff',)
+    ('Anke Derhoff',)
+    ('Anna Aerhoff',)
+    ('Anton Berhoff',)
+    ('Astrid Cerhoff',)
+q14: 5 rows
+    ('audio', 224.58, 455.82)
+    ('displays', 312.41, 478.92)
+    ('network', 179.65, 479.88)
+    ('peripherals', 202.81, 365.73)
+    ('storage', 11.75, 475.38)
+q15: 89 rows
+    (11, 4)
+    (14, 4)
+    (21, 4)
+    (26, 4)
+    (29, 4)
+    (40, 4)
+    (46, 4)
+    (54, 4)
+    (55, 4)
+    (63, 4)
+    (71, 4)
+    (72, 4)
+    (111, 4)
+    (114, 4)
+    (1, 3)
+    (9, 3)
+    (17, 3)
+    (18, 3)
+    (19, 3)
+    (28, 3)
+    (31, 3)
+    (33, 3)
+    (34, 3)
+    (37, 3)
+    (38, 3)
+    (47, 3)
+    (49, 3)
+    (51, 3)
+    (59, 3)
+    (74, 3)
+    (76, 3)
+    (78, 3)
+    (79, 3)
+    (84, 3)
+    (85, 3)
+    (88, 3)
+    (93, 3)
+    (97, 3)
+    (102, 3)
+    (104, 3)
+    (106, 3)
+    (107, 3)
+    (110, 3)
+    (115, 3)
+    (121, 3)
+    (122, 3)
+    (123, 3)
+    (129, 3)
+    (131, 3)
+    (133, 3)
+    (136, 3)
+    (140, 3)
+    (3, 2)
+    (4, 2)
+    (8, 2)
+    (10, 2)
+    (15, 2)
+    (24, 2)
+    (25, 2)
+    (30, 2)
+    (32, 2)
+    (41, 2)
+    (42, 2)
+    (43, 2)
+    (44, 2)
+    (58, 2)
+    (61, 2)
+    (62, 2)
+    (67, 2)
+    (70, 2)
+    (73, 2)
+    (80, 2)
+    (81, 2)
+    (82, 2)
+    (94, 2)
+    (96, 2)
+    (98, 2)
+    (100, 2)
+    (103, 2)
+    (108, 2)
+    (109, 2)
+    (112, 2)
+    (116, 2)
+    (118, 2)
+    (124, 2)
+    (125, 2)
+    (126, 2)
+    (137, 2)
+    (138, 2)
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-tdd-rigorous\work\_verify.py", line 77, in <module>
+    assert len(totals) == len(paid)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+[0m
+[0m← [0mWrite work/_explore2.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython _explore2.py
+paid orders without any items: 2
+all orders without items: 6
+  empty order: (5, 'cancelled')
+  empty order: (53, 'cancelled')
+  empty order: (95, 'paid')
+  empty order: (99, 'cancelled')
+  empty order: (101, 'paid')
+  empty order: (130, 'cancelled')
+q06 inner-join: 1592.12  left-join-with-zeros: 1557.13
+[0m
+[0m← [0mEdit work/_verify.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-tdd-rigorous\work\_verify.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-tdd-rigorous\work\_verify.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-tdd-rigorous\work\_verify.py
+@@ -73,12 +73,24 @@
+ for oid, pid, qty, up in items:
+     if oid in paid:
+         per_order[oid] = per_order.get(oid, 0.0) + qty * up
+ totals = list(per_order.values())
+-assert len(totals) == len(paid)
++paid_with_items = {
++    oid for oid in paid
++    if any(oi[0] == oid for oi in items)}
++assert len(totals) == len(paid_with_items)
+ exp6 = round(sum(totals) / len(totals), 2)
+ got6 = A.q06(conn)[0][0]
+ assert abs(got6 - exp6) < 1e-9, f"q06 mismatch: {got6} vs {exp6}"
++# SQL-semantics proof: LEFT JOIN with plain SUM gives NULL totals for empty
++# orders, which AVG ignores -> must equal inner-join result.
++alt6 = cur.execute(
++    "SELECT ROUND(AVG(total),2) FROM (SELECT o.id, SUM(oi.qty*oi.unit_price)"
++    " total FROM orders o LEFT JOIN order_items oi ON oi.order_id=o.id "
++    "WHERE o.status='paid' GROUP BY o.id)").fetchone()[0]
++assert alt6 == got6, f"q06 variant disagreement: {alt6} vs {got6}"
++print(f"q06 note: {len(paid) - len(paid_with_items)} item-less paid orders "
++      f"excluded via NULL-SUM/AVG semantics ({got6})")
+ 
+ # q07
+ seen_pids = {p for _, p, _, _ in items}
+ exp7 = sorted(seen_pids ^ set() or [])  # noqa placeholder
+
+[0m
+[0m$ [0mpython _verify.py
+q01: 4 rows
+    (2, 'Ben Berhoff')
+    (10, 'Jonas Jerhoff')
+    (11, 'Kara Kerhoff')
+    (20, 'Tara Terhoff')
+q02: 3 rows
+    (16, 15212.16)
+    (3, 12954.44)
+    (4, 11851.32)
+q03: 3 rows
+    ('cancelled', 29)
+    ('paid', 91)
+    ('pending', 20)
+q04: 6 rows
+    ('2026-01', 28579.77)
+    ('2026-02', 19304.49)
+    ('2026-03', 19016.82)
+    ('2026-04', 27821.3)
+    ('2026-05', 23875.56)
+    ('2026-06', 23100.45)
+q05: 1 rows
+    (2, 'Ben Berhoff')
+q06: 1 rows
+    (1592.12,)
+q07: 2 rows
+    (18, 'HDD 4TB')
+    (19, 'MicroSD 256GB')
+q08: 30 rows
+    (1, 6)
+    (2, 0)
+    (3, 1)
+    (4, 2)
+    (5, 1)
+    (6, 10)
+    (7, 5)
+    (8, 5)
+    (9, 3)
+    (10, 1)
+    (11, 2)
+    (12, 5)
+    (13, 2)
+    (14, 3)
+    (15, 4)
+    (16, 1)
+    (17, 2)
+    (18, 2)
+    (19, 2)
+    (20, 3)
+    (21, 2)
+    (22, 4)
+    (23, 2)
+    (24, 5)
+    (25, 1)
+    (26, 4)
+    (27, 6)
+    (28, 5)
+    (29, 0)
+    (30, 2)
+q09: 1 rows
+    (3, 10, 1439.6399999999999)
+q10: 1 rows
+    (35.0,)
+q11: 5 rows
+    ('DE',)
+    ('FR',)
+    ('GB',)
+    ('NL',)
+    ('US',)
+q12: 5 rows
+    ('displays', 8717.27)
+    ('peripherals', 4921.15)
+    ('audio', 4337.48)
+    ('storage', 4153.5)
+    ('network', 971.05)
+q13: 5 rows
+    ('Amelie Aerhoff',)
+    ('Anke Derhoff',)
+    ('Anna Aerhoff',)
+    ('Anton Berhoff',)
+    ('Astrid Cerhoff',)
+q14: 5 rows
+    ('audio', 224.58, 455.82)
+    ('displays', 312.41, 478.92)
+    ('network', 179.65, 479.88)
+    ('peripherals', 202.81, 365.73)
+    ('storage', 11.75, 475.38)
+q15: 89 rows
+    (11, 4)
+    (14, 4)
+    (21, 4)
+    (26, 4)
+    (29, 4)
+    (40, 4)
+    (46, 4)
+    (54, 4)
+    (55, 4)
+    (63, 4)
+    (71, 4)
+    (72, 4)
+    (111, 4)
+    (114, 4)
+    (1, 3)
+    (9, 3)
+    (17, 3)
+    (18, 3)
+    (19, 3)
+    (28, 3)
+    (31, 3)
+    (33, 3)
+    (34, 3)
+    (37, 3)
+    (38, 3)
+    (47, 3)
+    (49, 3)
+    (51, 3)
+    (59, 3)
+    (74, 3)
+    (76, 3)
+    (78, 3)
+    (79, 3)
+    (84, 3)
+    (85, 3)
+    (88, 3)
+    (93, 3)
+    (97, 3)
+    (102, 3)
+    (104, 3)
+    (106, 3)
+    (107, 3)
+    (110, 3)
+    (115, 3)
+    (121, 3)
+    (122, 3)
+    (123, 3)
+    (129, 3)
+    (131, 3)
+    (133, 3)
+    (136, 3)
+    (140, 3)
+    (3, 2)
+    (4, 2)
+    (8, 2)
+    (10, 2)
+    (15, 2)
+    (24, 2)
+    (25, 2)
+    (30, 2)
+    (32, 2)
+    (41, 2)
+    (42, 2)
+    (43, 2)
+    (44, 2)
+    (58, 2)
+    (61, 2)
+    (62, 2)
+    (67, 2)
+    (70, 2)
+    (73, 2)
+    (80, 2)
+    (81, 2)
+    (82, 2)
+    (94, 2)
+    (96, 2)
+    (98, 2)
+    (100, 2)
+    (103, 2)
+    (108, 2)
+    (109, 2)
+    (112, 2)
+    (116, 2)
+    (118, 2)
+    (124, 2)
+    (125, 2)
+    (126, 2)
+    (137, 2)
+    (138, 2)
+q06 note: 2 item-less paid orders excluded via NULL-SUM/AVG semantics (1592.12)
+q09 tie set: [(3, 10, 1439.6399999999999)]
+orders on may31/jul1 boundary window: 1
+ALL CROSS-CHECKS PASSED
+[0m
+[0m$ [0mpython db_generator.py; if ($?) { python _verify.py > $null; if ($?) { echo "VERIFY OK after rebuild" } }; python -c "
+import sqlite3
+c=sqlite3.connect('ecommerce.db')
+rows=c.execute('SELECT oi.product_id, ROUND(SUM(oi.qty*oi.unit_price),2) r FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.status=\'paid\' GROUP BY 1 ORDER BY r DESC LIMIT 5').fetchall()
+print('top5:', rows)
+print('gap rank3->rank4:', rows[2][1]-rows[3][1])
+"
+built ecommerce.db
+VERIFY OK after rebuild
+top5: [(16, 15212.16), (3, 12954.44), (4, 11851.32), (5, 11322.6), (6, 11015.16)]
+gap rank3->rank4: 528.7199999999993
+[0m
+[0m$ [0mRemove-Item _explore.py, _explore2.py, _verify.py; Get-ChildItem
+Directory: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-tdd-rigorous\work
+
+
+Mode                 LastWriteTime         Length Name                                                                 
+----                 -------------         ------ ----                                                                 
+d-----        26-08-2026     15:36                __pycache__                                                          
+-a----        26-08-2026     15:35           6361 answers.py                                                           
+-a----        26-08-2026     09:20           4147 db_generator.py                                                      
+-a----        26-08-2026     15:37          36864 ecommerce.db                                                         
+-a----        26-08-2026     09:21           3420 questions.py
+[0m
+[0m# [0mTodos
+[✓] Generate ecommerce.db and inspect schema/data
+[✓] Implement q01-q15 in answers.py
+[✓] Run all queries, print outputs, sanity-check counts/edge cases (q09 ties, q06 rounding, q12 boundary dates)
+[0m
