@@ -39,6 +39,26 @@ any modification zeroes that task.
 
 ## Verdict
 
-See **[leaderboard.md](leaderboard.md)** — all 5 variants scored 100%;
-`tdd-rigorous` was fastest (5.9 min), the orchestration-heavy file was slowest
-(10.4 min) with identical output quality.
+See **[leaderboard.md](leaderboard.md)** (round 1: all variants hit 100%,
+only speed differed) and **[leaderboard-round2.md](leaderboard-round2.md)**
+(four themes; Track A broke saturation — `orchestrator-heavy` averaged
+**100.0**, control **99.86**, `tdd-rigorous` **84.0**, `user-proposed`
+**75.1** with an infra-confounded DNF).
+
+## Custom agents (round3)
+
+Reusable opencode agents distilled from this experiment — sources in
+[`round3/`](round3/), install globally with
+`powershell -File round3/install.ps1`, then restart opencode:
+
+| Agent | Role |
+|-------|------|
+| `arena-runner` | launches/scores benchmark runs; provider-dropout retry logic; results-only commits |
+| `arena-analyst` | evidence-first leaderboard aggregation with cap/DNF honesty markers |
+| `suite-author` | authors new task suites under the repo's verified integrity conventions |
+
+Slash commands: `/run-arena <track> <variant>` · `/analyze-arena [round1|round2|all]`
+
+> Agents intentionally ship without a pinned model — provider model IDs
+> rotate (opencode-go/ox-alpha-free vanished mid-experiment). Pass
+> `-m <provider/model>` or rely on your configured default.
