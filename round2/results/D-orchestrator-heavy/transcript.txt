@@ -1,0 +1,18 @@
+Recon complete — I've read all three files myself (the repo is just these 3 files, so exploration is done). Key facts extracted:
+
+- `mockserver.py`: script outcomes (`None`/`"500"`/`"429"`) are consumed **per GET request** (cycling, per-server); 429 carries `Retry-After: 1`; POST `/orders` checks bearer against `"tok-live"` and rejects `"tok-stale"` with 401; `/auth/refresh` returns `{"token": "tok-live"}` or 403.
+- Contract: `max_retries` total attempts per logical step → `ApiError(..., attempts=max_retries)`; sleep via injected `sleeper` (`Retry-After` if present else `backoff_base * 2**attempt`); silent single refresh on 401; `AuthError` on 403-refresh or repeat 401.
+
+Planning: single-file implementation (sole owner: me) → my own e2e suite against the live server → parallel red-team agent for adversarial review → integrate fixes → final full verification.
+Fixing a signature mismatch I introduced (`_url` static vs instance call):
+Now the e2e harness in temp dir, then I'll run it while spawning the red-team agent in parallel:
+Red-team agent: **PASS** — 19/19 adversarial tests, no functional defects found. My one failure (`test_exhaustion_on_429` expecting `[1, 1]`) is a bug in **my test's expectation**, not the client: sleeps occur only *between* attempts, so `max_retries=2` yields exactly one sleep `[1]` before raising — consistent with the spec ("sleeping between attempts") and matching the red-team's independently verified behavior. Fixing the assertion and re-running:
+All green (14/14 mine + 19/19 red-team). Final acceptance check — confirm only `work/client.py` changed:
+Those `harness/*` modifications and `round2/results/` are pre-existing arena infrastructure — untouched by me; my only change is `work/client.py`.
+Done. `work/client.py` fully implements the spec (stdlib only):
+
+- **`list_all()`** — cursor pagination following `next_cursor` until `null`, exact server order, any item count.
+- **Retries** — `_exchange()` retries 500/429 up to `max_retries` total attempts per logical step, sleeping via injected `sleeper`: `Retry-After` when present, else `backoff_base * 2**attempt`; no sleep after the final failure; raises `ApiError(msg, attempts=max_retries)` on exhaustion; fresh budget per step (success resets).
+- **Auth** — `create_order()` silently refreshes at most once per call on 401 (`POST /auth/refresh`, stores new bearer), retries once; `AuthError` on 403-refresh or repeat 401. Non-retryable statuses raise `ApiError` with `.status`.
+
+Evidence: my 14-test e2e suite against the live in-process mockserver passes (`OK, 14 tests`), plus an independent red-team agent's 19 adversarial tests pass (exhaustion mid-pagination, Retry-After honoring, `refresh_count`/`orders_served` state assertions, positional-constructor check). One red-team note: a negative `Retry-After` header would make real `time.sleep` raise — unreachable via this mockserver, left as-is.
