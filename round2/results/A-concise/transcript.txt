@@ -1,0 +1,2 @@
+All 8 tasks reviewed. Now implementing each module.
+Now writing comprehensive scratch sanity checks in the temp directory (outside the repo):
