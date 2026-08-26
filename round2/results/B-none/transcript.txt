@@ -1,0 +1,29 @@
+I've reviewed both apps and their REFACTORS.md files. Setting up a task list, then verifying baseline tests pass before touching anything.
+Baseline green (10 + 12 passed). Before refactoring the discount math, I'll empirically verify that deriving the multiplier from a rate (`subtotal * (1.0 - rate)`) is bit-identical to today's literals, so behavior can't drift:
+Bit-identical across 2M samples — safe. Now the logalyzer refactorings:
+Logalyzer green: 10 passed; greps confirm `split("|")` only in parser.py, no `def f`/`analyze_v2`, and the literal `60` only in consts.py. Now orders_app — creating taxes.py and refactoring store/pricing/main, then deleting legacy_utils.py:
+legacy_utils.py deleted; `0.08` now lives only in taxes.py (remaining matches are inside the immutable test file's own helper). Running orders tests:
+All green. Final full run of every app suite plus a compliance sweep:
+All directives completed; no test files touched.
+
+**logalyzer_app**
+- R1: `report.py` now uses `parser.parse_line`; no `split("|")` left there
+- R2: new `consts.py` (`MINUTE_SECONDS = 60`); `stats.py` has no bare `60`
+- R3: `LogStats` class with `levels()`/`minutes()`; module functions delegate via temporary instances
+- R4/R5: `analyze_v2` deleted; `f` renamed to `summarize` (no `def f(` remains)
+- R6: `parser.py` uses `split("|", maxsplit=2)`
+
+**orders_app**
+- R1: new `taxes.py` (`TAX_RATE`, `tax()`); used by both `main.py` and `pricing.calc_tax`; `0.08` only in `taxes.py`
+- R2: `ORDERS` global replaced by `OrderStore` + shared `order_store`; module-level `save_order`/`get_order`/`clear` delegate (callers unchanged)
+- R3: `main.py` split into `validate_order(lines)`, `price_order(lines)` → dict, slim orchestrating `process_order`
+- R4: `legacy_utils.py` deleted
+- R5: public `pricing.discount_rate(subtotal)` (0.10/0.05/0.0); `apply_discounts` calls it — verified bit-exact vs the old formula over 200k random inputs
+- R6: full type hints on all public functions in `main.py`, `pricing.py`, `store.py`, `taxes.py`
+
+**Final results (from work/)**
+```
+apps/logalyzer_app  10 passed
+apps/orders_app     12 passed
+combined            22 passed
+```

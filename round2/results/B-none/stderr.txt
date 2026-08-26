@@ -1,0 +1,160 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m→ [0mRead .
+[0m→ [0mRead work
+[0m✱ [0mGlob "work/apps/**/*"[90m 11 matches[0m
+[0m→ [0mRead work/apps/logalyzer_app/REFACTORS.md
+[0m→ [0mRead work/apps/orders_app/REFACTORS.md
+[0m→ [0mRead work/apps/logalyzer_app/parser.py
+[0m→ [0mRead work/apps/logalyzer_app/stats.py
+[0m→ [0mRead work/apps/logalyzer_app/report.py
+[0m→ [0mRead work/apps/logalyzer_app/test_behavior_logalyzer.py
+[0m→ [0mRead work/apps/orders_app/main.py
+[0m→ [0mRead work/apps/orders_app/store.py
+[0m→ [0mRead work/apps/orders_app/pricing.py
+[0m→ [0mRead work/apps/orders_app/legacy_utils.py
+[0m→ [0mRead work/apps/orders_app/test_behavior_orders.py
+[0m
+[0m# [0mTodos
+[•] Run baseline test suites for both apps
+[ ] logalyzer R1-R6: dedupe report parsing, consts.py, LogStats class, delete analyze_v2, rename f->summarize, maxsplit=2
+[ ] Run logalyzer tests + verify directive greps
+[ ] orders R1-R6: taxes.py, OrderStore, split process_order, delete legacy_utils.py, discount_rate, type hints
+[ ] Run orders tests + verify directive greps
+[ ] Final full run of every app suite and report
+[0m
+[0m$ [0mpython --version; python -m pytest apps/logalyzer_app -q; python -m pytest apps/orders_app -q
+Python 3.11.9
+C:\Users\arsat\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pytest_asyncio\plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+..........                                                               [100%]
+10 passed in 0.79s
+C:\Users\arsat\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pytest_asyncio\plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+............                                                             [100%]
+12 passed in 0.81s
+[0m
+[0m$ [0mpython -c "
+import random, struct
+def old(s):
+    if s >= 500: return s * 0.90
+    if s >= 100: return s * 0.95
+    return s
+def new(s):
+    r = 0.10 if s >= 500 else (0.05 if s >= 100 else 0.0)
+    return s * (1.0 - r)
+random.seed(1)
+vals = [0.0,1e-9,99.999999,100.0,100.000001,499.999999,500.0,500.000001,123.45,12.25,30.0,200.0]
+for i in range(2000000):
+    vals.append(round(random.uniform(0,1000), random.choice([2,4,6,8]))+random.random()*1e-6)
+bad=[s for s in vals if struct.pack('d',old(s))!=struct.pack('d',new(s))]
+print('mismatches:', len(bad), bad[:5])
+print('(1.0-0.10)==0.90 ->', 1.0-0.10==0.90, '; (1.0-0.05)==0.95 ->', 1.0-0.05==0.95)
+"
+mismatches: 0 []
+(1.0-0.10)==0.90 -> True ; (1.0-0.05)==0.95 -> True
+[0m
+[0m← [0mWrite work/apps/logalyzer_app/consts.py
+Wrote file successfully.
+[0m
+[0m← [0mEdit work/apps/logalyzer_app/parser.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-none\work\apps\logalyzer_app\parser.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-none\work\apps\logalyzer_app\parser.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\B-none\work\apps\logalyzer_app\parser.py
+@@ -4,9 +4,9 @@
+ 
+ 
+ def parse_line(line):
+     # format: LEVEL|epoch|message   (message may contain '|')
+-    parts = line.split("|", 2)
++    parts = line.split("|", maxsplit=2)
+     if len(parts) != 3:
+         return None
+     level, ts, msg = parts
+     return {"level": level, "ts": int(ts), "msg": msg.rstrip("\n")}
+
+[0m
+[0m← [0mWrite work/apps/logalyzer_app/stats.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/logalyzer_app/report.py
+Wrote file successfully.
+[0m
+[0m✱ [0mGrep "split\("\|"\)|def f\(|analyze_v2|\b60\b"[90m in work/apps/logalyzer_app · 1 match[0m
+[0m
+[0m$ [0mpython -m pytest apps/logalyzer_app -q
+C:\Users\arsat\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pytest_asyncio\plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+..........                                                               [100%]
+10 passed in 1.00s
+[0m
+[0m← [0mWrite work/apps/orders_app/taxes.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/orders_app/store.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/orders_app/pricing.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/apps/orders_app/main.py
+Wrote file successfully.
+[0m
+[0m$ [0mRemove-Item -LiteralPath "apps\orders_app\legacy_utils.py"; Test-Path -LiteralPath "apps\orders_app\legacy_utils.py"
+False
+[0m
+[0m✱ [0mGrep "0\.08|ORDERS|legacy_utils|normalize_customer|old_receipt_fmt|audit_log"[90m in work/apps · 3 matches[0m
+[0m
+[0m$ [0mpython -m pytest apps/orders_app -q
+C:\Users\arsat\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pytest_asyncio\plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+............                                                             [100%]
+12 passed in 0.87s
+[0m
+[0m$ [0mpython -m pytest apps/logalyzer_app apps/orders_app -q; python -c "
+import sys; sys.path.insert(0, 'apps/orders_app'); sys.path.insert(0, 'apps/logalyzer_app')
+import random
+import stats, parser, report, store, pricing, taxes, main
+# R3: class methods == module functions
+random.seed(7)
+lines = ['INFO|%d|x' % random.randint(0,2**31) for _ in range(500)] + ['junk', 'A|1']
+s = stats.LogStats(lines)
+assert s.levels() == stats.level_counts(lines) and s.minutes() == stats.minute_counts(lines)
+# old apply_discounts formula vs new (bit-exact)
+def old_ad(ls):
+    sub = 0.0
+    for p,q in ls:
+        if q < 1: raise ValueError('invalid quantity')
+        sub += p*q
+    return sub*0.90 if sub>=500 else (sub*0.95 if sub>=100 else sub)
+for _ in range(200000):
+    ls = [(round(random.uniform(0,300),2), random.randint(1,5)) for _ in range(3)]
+    assert pricing.apply_discounts(ls) == old_ad(ls), ls
+print('equivalence checks OK; order_store shared instance:', store.order_store is store.order_store)
+"
+C:\Users\arsat\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pytest_asyncio\plugin.py:217: PytestDeprecationWarning: The configuration option "asyncio_default_fixture_loop_scope" is unset.
+The event loop scope for asynchronous fixtures will default to the fixture caching scope. Future versions of pytest-asyncio will default the loop scope for asynchronous fixtures to function scope. Set the default fixture loop scope explicitly in order to avoid unexpected behavior in the future. Valid fixture loop scopes are: "function", "class", "module", "package", "session"
+
+  warnings.warn(PytestDeprecationWarning(_DEFAULT_FIXTURE_LOOP_SCOPE_UNSET))
+......................                                                   [100%]
+22 passed in 1.08s
+equivalence checks OK; order_store shared instance: True
+[0m
+[0m# [0mTodos
+[✓] Run baseline test suites for both apps
+[✓] logalyzer R1-R6: dedupe report parsing, consts.py, LogStats class, delete analyze_v2, rename f->summarize, maxsplit=2
+[✓] Run logalyzer tests + verify directive greps
+[✓] orders R1-R6: taxes.py, OrderStore, split process_order, delete legacy_utils.py, discount_rate, type hints
+[✓] Run orders tests + verify directive greps
+[✓] Final full run of every app suite and report
+[0m
