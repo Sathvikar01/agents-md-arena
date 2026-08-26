@@ -1,0 +1,11 @@
+﻿{
+    "seconds":  860.4,
+    "track":  "A",
+    "variant":  "user-proposed",
+    "timed_out":  false,
+    "transcript_bytes":  0,
+    "repo_sha":  "755ecf737ec187513e4b62c7bb39ba9dc36502b3",
+    "model":  "opencode-go/ox-alpha-free",
+    "budget_min":  25,
+    "exit_code":  null
+}

@@ -1,0 +1,1 @@
+﻿Attempted 4x (14-20 min each). Every session: full read phase completed, then upstream stream dropped before any edit landed (AI_APICallError in opencode log). Score is from the last attempt. Interpret as infra-confounded DNF, not a clean measurement.

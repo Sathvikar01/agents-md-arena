@@ -1,0 +1,47 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m$ [0mGet-ChildItem -Recurse -Depth 3 work/tasks | Select-Object FullName
+FullName                                                                                                               
+--------                                                                                                               
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A1-jsonlite               
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A2-cronlite               
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A3-ttlcache               
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A4-tokenbucket            
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A5-intervals              
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A6-roman                  
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A7-globber                
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A8-semver                 
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A1-jsonlite\jsonlite.py   
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A1-jsonlite\SPEC.md       
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A2-cronlite\cronlite.py   
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A2-cronlite\SPEC.md       
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A3-ttlcache\SPEC.md       
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A3-ttlcache\ttlcache.py   
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A4-tokenbucket\SPEC.md    
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A4-tokenbucket\tokenbuc...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A5-intervals\intervals.py 
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A5-intervals\SPEC.md      
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A6-roman\roman.py         
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A6-roman\SPEC.md          
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A7-globber\globber.py     
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A7-globber\SPEC.md        
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A8-semver\semver.py       
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-user-proposed\work\tasks\A8-semver\SPEC.md
+[0m
+[0m→ [0mRead work/tasks/A1-jsonlite/SPEC.md
+[0m→ [0mRead work/tasks/A1-jsonlite/jsonlite.py
+[0m→ [0mRead work/tasks/A2-cronlite/SPEC.md
+[0m→ [0mRead work/tasks/A2-cronlite/cronlite.py
+[0m→ [0mRead work/tasks/A3-ttlcache/SPEC.md
+[0m→ [0mRead work/tasks/A3-ttlcache/ttlcache.py
+[0m→ [0mRead work/tasks/A4-tokenbucket/SPEC.md
+[0m→ [0mRead work/tasks/A4-tokenbucket/tokenbucket.py
+[0m→ [0mRead work/tasks/A5-intervals/SPEC.md
+[0m→ [0mRead work/tasks/A5-intervals/intervals.py
+[0m→ [0mRead work/tasks/A6-roman/SPEC.md
+[0m→ [0mRead work/tasks/A6-roman/roman.py
+[0m→ [0mRead work/tasks/A7-globber/SPEC.md
+[0m→ [0mRead work/tasks/A7-globber/globber.py
+[0m→ [0mRead work/tasks/A8-semver/SPEC.md
+[0m→ [0mRead work/tasks/A8-semver/semver.py

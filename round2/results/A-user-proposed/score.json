@@ -1,0 +1,49 @@
+{
+  "mode": "A",
+  "total_expected": 177,
+  "total_passed": 1,
+  "score_pct": 0.56,
+  "tampered": [],
+  "per_task": {
+    "A1-jsonlite": {
+      "expected": 20,
+      "passed": 0,
+      "tampered": false
+    },
+    "A2-cronlite": {
+      "expected": 19,
+      "passed": 0,
+      "tampered": false
+    },
+    "A3-ttlcache": {
+      "expected": 13,
+      "passed": 0,
+      "tampered": false
+    },
+    "A4-tokenbucket": {
+      "expected": 11,
+      "passed": 0,
+      "tampered": false
+    },
+    "A5-intervals": {
+      "expected": 15,
+      "passed": 0,
+      "tampered": false
+    },
+    "A6-roman": {
+      "expected": 46,
+      "passed": 0,
+      "tampered": false
+    },
+    "A7-globber": {
+      "expected": 7,
+      "passed": 0,
+      "tampered": false
+    },
+    "A8-semver": {
+      "expected": 46,
+      "passed": 1,
+      "tampered": false
+    }
+  }
+}
