@@ -50,7 +50,7 @@ def main() -> int:
                 if hid.exists():
                     for f in hid.glob("test_*.py"):
                         shutil.copy2(f, work / f.name)
-                n = collect_count(work.parent, f"tasks/{tid}")
+                n = collect_count(work.parent, tid)
             man["A"]["tasks"][tid] = n
 
     # ---- Track B ----

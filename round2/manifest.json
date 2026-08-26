@@ -1,14 +1,14 @@
 {
   "A": {
     "tasks": {
-      "A1-jsonlite": 0,
-      "A2-cronlite": 0,
-      "A3-ttlcache": 0,
-      "A4-tokenbucket": 0,
-      "A5-intervals": 0,
-      "A6-roman": 0,
-      "A7-globber": 0,
-      "A8-semver": 0
+      "A1-jsonlite": 20,
+      "A2-cronlite": 19,
+      "A3-ttlcache": 13,
+      "A4-tokenbucket": 11,
+      "A5-intervals": 15,
+      "A6-roman": 46,
+      "A7-globber": 7,
+      "A8-semver": 46
     }
   },
   "B": {
@@ -32,5 +32,7 @@
   "C": {
     "n_questions": 15
   },
-  "D": {}
+  "D": {
+    "n_scenario_tests": 6
+  }
 }
