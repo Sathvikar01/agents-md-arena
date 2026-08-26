@@ -1,0 +1,755 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m$ [0mGet-ChildItem -Recurse work/tasks | Select-Object FullName
+FullName                                                                                                               
+--------                                                                                                               
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A1-jsonlite                
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite                
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A3-ttlcache                
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A4-tokenbucket             
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A5-intervals               
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A6-roman                   
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A7-globber                 
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A8-semver                  
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A1-jsonlite\jsonlite.py    
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A1-jsonlite\SPEC.md        
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py    
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\SPEC.md        
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A3-ttlcache\SPEC.md        
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A3-ttlcache\ttlcache.py    
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A4-tokenbucket\SPEC.md     
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A4-tokenbucket\tokenbuck...
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A5-intervals\intervals.py  
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A5-intervals\SPEC.md       
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A6-roman\roman.py          
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A6-roman\SPEC.md           
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A7-globber\globber.py      
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A7-globber\SPEC.md         
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A8-semver\semver.py        
+C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A8-semver\SPEC.md
+[0m
+[0m→ [0mRead work/tasks/A1-jsonlite/SPEC.md
+[0m→ [0mRead work/tasks/A2-cronlite/SPEC.md
+[0m→ [0mRead work/tasks/A1-jsonlite/jsonlite.py
+[0m→ [0mRead work/tasks/A2-cronlite/cronlite.py
+[0m→ [0mRead work/tasks/A3-ttlcache/SPEC.md
+[0m→ [0mRead work/tasks/A3-ttlcache/ttlcache.py
+[0m→ [0mRead work/tasks/A4-tokenbucket/SPEC.md
+[0m→ [0mRead work/tasks/A4-tokenbucket/tokenbucket.py
+[0m→ [0mRead work/tasks/A5-intervals/SPEC.md
+[0m→ [0mRead work/tasks/A5-intervals/intervals.py
+[0m→ [0mRead work/tasks/A6-roman/SPEC.md
+[0m→ [0mRead work/tasks/A6-roman/roman.py
+[0m→ [0mRead work/tasks/A7-globber/SPEC.md
+[0m→ [0mRead work/tasks/A7-globber/globber.py
+[0m→ [0mRead work/tasks/A8-semver/SPEC.md
+[0m→ [0mRead work/tasks/A8-semver/semver.py
+[0m
+[0m# [0mTodos
+[•] A1 jsonlite: strict JSON parser
+[ ] A2 cronlite: next_after cron evaluator
+[ ] A3 ttlcache: TTLCache LRU+TTL
+[ ] A4 tokenbucket: TokenBucket
+[ ] A5 intervals: interval algebra
+[ ] A6 roman: to_int/from_int
+[ ] A7 globber: match()
+[ ] A8 semver: parse_version/satisfies/Version ordering
+[ ] Final re-read of every SPEC/docstring vs implementation + full sanity suite
+[0m
+[0m← [0mWrite work/tasks/A1-jsonlite/jsonlite.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/scratch_test_a1.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython work\scratch_test_a1.py
+OK   {"a": [1, 2.5e2, "x\n", true, null]} -> {'a': [1, 250.0, 'x\n', True, None]}
+OK   "\u0041" -> 'A'
+OK   "42" -> '42'
+OK   42 -> 42
+OK   -0 -> 0
+OK   -1 -> -1
+OK   true -> True
+OK   false -> False
+OK   null -> None
+OK   0 -> 0
+OK   123456789012345678901234567890 -> 123456789012345678901234567890
+OK   1e2 -> 100.0
+OK   1E+2 -> 100.0
+OK   2.5e-2 -> 0.025
+OK   -12.34e5 -> -1234000.0
+OK   [] -> []
+OK   {} -> {}
+OK   [ ] -> []
+OK   { 	 "k"
+:[1]} -> {'k': [1]}
+OK   "\/" -> '/'
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a1.py", line 40, in <module>
+    assert ok('"\\\\') == None or True  # placeholder
+           ^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a1.py", line 7, in ok
+    v = loads(expr_str)
+        ^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A1-jsonlite\jsonlite.py", line 246, in loads
+    value = parser.parse_value()
+            ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A1-jsonlite\jsonlite.py", line 85, in parse_value
+    return self.parse_string()
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A1-jsonlite\jsonlite.py", line 109, in parse_string
+    self.error("unterminated string")
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A1-jsonlite\jsonlite.py", line 57, in error
+    raise ValueError("%s at position %d" % (msg, self.pos))
+ValueError: unterminated string at position 3
+[0m
+[0m← [0mEdit work/scratch_test_a1.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a1.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a1.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a1.py
+@@ -36,10 +36,12 @@
+ assert ok('{}') == {}
+ assert ok('[ ]') == []
+ assert ok('{ \t "k"\n:\r[1]}') == {"k": [1]}
+ assert ok('"\\/"') == "/"
+-assert ok('"\\\\') == None or True  # placeholder
+ assert ok('"\\\\"') == "\\"
++bad('"\\\\"x')  # escaped quote then garbage? no: "\\\\" is a valid string, x trailing -> covered below
++assert ok('"a\\"b"') == 'a"b'
++bad('"\\u0041')   # unterminated after escape
+ assert ok('"\\b\\f\\n\\r\\t"') == "\b\f\n\r\t"
+ assert ok('"é"') == "é"          # raw unicode ok
+ assert ok('"\\uD83D\\uDE00"') == "\U0001F600"   # surrogate pair
+ # duplicates last wins
+
+[0m
+[0m$ [0mpython work\scratch_test_a1.py
+OK   {"a": [1, 2.5e2, "x\n", true, null]} -> {'a': [1, 250.0, 'x\n', True, None]}
+OK   "\u0041" -> 'A'
+OK   "42" -> '42'
+OK   42 -> 42
+OK   -0 -> 0
+OK   -1 -> -1
+OK   true -> True
+OK   false -> False
+OK   null -> None
+OK   0 -> 0
+OK   123456789012345678901234567890 -> 123456789012345678901234567890
+OK   1e2 -> 100.0
+OK   1E+2 -> 100.0
+OK   2.5e-2 -> 0.025
+OK   -12.34e5 -> -1234000.0
+OK   [] -> []
+OK   {} -> {}
+OK   [ ] -> []
+OK   { 	 "k"
+:[1]} -> {'k': [1]}
+OK   "\/" -> '/'
+OK   "\\" -> '\\'
+ERR  '"\\\\"x' (as expected)
+OK   "a\"b" -> 'a"b'
+ERR  '"\\u0041' (as expected)
+OK   "\b\f\n\r\t" -> '\x08\x0c\n\r\t'
+OK   "�" -> '�'
+OK   "\uD83D\uDE00" -> Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a1.py", line 46, in <module>
+    assert ok('"\\uD83D\\uDE00"') == "\U0001F600"   # surrogate pair
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a1.py", line 8, in ok
+    print("OK  ", expr_str, "->", repr(v))
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode character '\U0001f600' in position 1: character maps to <undefined>
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a1.py
+OK   {"a": [1, 2.5e2, "x\n", true, null]} -> {'a': [1, 250.0, 'x\n', True, None]}
+OK   "\u0041" -> 'A'
+OK   "42" -> '42'
+OK   42 -> 42
+OK   -0 -> 0
+OK   -1 -> -1
+OK   true -> True
+OK   false -> False
+OK   null -> None
+OK   0 -> 0
+OK   123456789012345678901234567890 -> 123456789012345678901234567890
+OK   1e2 -> 100.0
+OK   1E+2 -> 100.0
+OK   2.5e-2 -> 0.025
+OK   -12.34e5 -> -1234000.0
+OK   [] -> []
+OK   {} -> {}
+OK   [ ] -> []
+OK   { 	 "k"
+:[1]} -> {'k': [1]}
+OK   "\/" -> '/'
+OK   "\\" -> '\\'
+ERR  '"\\\\"x' (as expected)
+OK   "a\"b" -> 'a"b'
+ERR  '"\\u0041' (as expected)
+OK   "\b\f\n\r\t" -> '\x08\x0c\n\r\t'
+OK   "é" -> 'é'
+OK   "\uD83D\uDE00" -> '😀'
+OK   {"a":1,"a":2} -> {'a': 2}
+OK   {"a": {"b": 1}, "a": 9} -> {'a': 9}
+deep nesting OK (200)
+ERR  '' (as expected)
+ERR  '   ' (as expected)
+ERR  '\t\n\r ' (as expected)
+ERR  '{} tail' (as expected)
+ERR  '01' (as expected)
+ERR  '[1,]' (as expected)
+ERR  '{"a":1,}' (as expected)
+ERR  '{,}' (as expected)
+ERR  '[1 2]' (as expected)
+ERR  '{"a" 1}' (as expected)
+ERR  '{"a"=1}' (as expected)
+ERR  '["a" "b"]' (as expected)
+ERR  '1 2' (as expected)
+ERR  'nullx' (as expected)
+ERR  'tru' (as expected)
+ERR  'True' (as expected)
+ERR  'FALSE' (as expected)
+ERR  "'x'" (as expected)
+ERR  '"unterminated' (as expected)
+ERR  '"\\q"' (as expected)
+ERR  '"\\u12"' (as expected)
+ERR  '"\\u12G4"' (as expected)
+ERR  '"ab\tcd"' (as expected)
+ERR  '"ab\ncd"' (as expected)
+ERR  '"ab\x01cd"' (as expected)
+ERR  '-' (as expected)
+ERR  '-a' (as expected)
+ERR  '1.' (as expected)
+ERR  '.5' (as expected)
+ERR  '+1' (as expected)
+ERR  '1e' (as expected)
+ERR  '1e+' (as expected)
+ERR  '--1' (as expected)
+ERR  '0x10' (as expected)
+ERR  'Infinity' (as expected)
+ERR  'NaN' (as expected)
+ERR  '[1,,2]' (as expected)
+ERR  '{}}' (as expected)
+ERR  '}' (as expected)
+ERR  ']' (as expected)
+ERR  ',' (as expected)
+ERR  ':' (as expected)
+ERR  '[},]' (as expected)
+ERR  '{"a"}' (as expected)
+ERR  '{"a":}' (as expected)
+ERR  '[:1]}' (as expected)
+ALL JSONLITE SANITY CHECKS PASSED
+[0m
+[0m← [0mWrite work/tasks/A2-cronlite/cronlite.py
+Wrote file successfully.
+[0m
+[0m← [0mEdit work/tasks/A2-cronlite/cronlite.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+@@ -73,10 +73,9 @@
+         raise ValueError("step not allowed on single value in %r" % text)
+     low = high = int(base)
+ if low < lo or high > hi:
+     raise ValueError(
+-        "value out of range for %s field: %r" % (
+-            _FIELD_NAMES[0], text))
++        "value out of range for %s field: %r" % (_field_name, text))
+ v = low
+ while v <= high:
+     values.add(v)
+     v += step
+
+[0m
+[0m← [0mEdit work/tasks/A2-cronlite/cronlite.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+@@ -46,9 +46,9 @@
+ # one comma-separated element: '*', '*', '*', 'a', 'a-b', 'a-b/s', '*/s'
+ _ITEM_RE = _re.compile(r"^(\*(?:/\d+)?|\d+(?:-\d+)?(?:/\d+)?)$")
+ 
+ 
+-def _parse_field(text, lo, hi):
++def _parse_field(text, lo, hi, _field_name):
+     """Return the frozenset of allowed integer values for one field."""
+     values = set()
+     for part in text.split(","):
+         if not _ITEM_RE.match(part):
+
+[0m
+[0m← [0mEdit work/tasks/A2-cronlite/cronlite.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+@@ -93,10 +93,10 @@
+ if len(fields) != 5:
+     raise ValueError(
+         "cron expression must have 5 fields, got %d" % len(fields))
+ parsed = []
+-for text, (lo, hi) in zip(fields, _FIELD_RANGES):
+-    parsed.append(_parse_field(text, lo, hi))
++for text, (lo, hi), name in zip(fields, _FIELD_RANGES, _FIELD_NAMES):
++    parsed.append(_parse_field(text, lo, hi, name))
+ self.minutes, self.hours, self.doms, self.months, self.dows = parsed
+ self.dom_restricted = fields[2] != "*"
+ self.dow_restricted = fields[4] != "*"
+ 
+
+[0m
+[0m← [0mEdit work/tasks/A2-cronlite/cronlite.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py
+@@ -135,10 +135,8 @@
+ one_hour = _datetime.timedelta(hours=1)
+ one_day = _datetime.timedelta(days=1)
+ 
+ while t <= deadline:
+-    if t > deadline:
+-        break
+     if t.month not in schedule.months:
+         # jump to the first minute of the next month
+         if t.month == 12:
+             t = t.replace(year=t.year + 1, month=1, day=1,
+
+[0m
+[0m← [0mWrite work/scratch_test_a2.py
+Wrote file successfully.
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a2.py
+OK   * * * * * | 2026-01-01 00:00:00 -> 2026-01-01 00:01:00
+OK   30 14 * * * | 2026-03-01 13:00:00 -> 2026-03-01 14:30:00
+OK   30 14 * * * | 2026-03-01 14:30:00 -> 2026-03-02 14:30:00
+OK   0 0 29 2 * | 2026-01-01 00:00:00 -> 2028-02-29 00:00:00
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 30, in <module>
+    expect('* * * * *', D(2026,1,1,0,0,30), D(2026,1,1,0,2))
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 10, in expect
+    assert got == want, "next_after(%r, %s) = %s, want %s" % (expr, after, got, want)
+           ^^^^^^^^^^^
+AssertionError: next_after('* * * * *', 2026-01-01 00:00:30) = 2026-01-01 00:01:00, want 2026-01-01 00:02:00
+[0m
+[0m← [0mEdit work/scratch_test_a2.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+@@ -26,10 +26,11 @@
+ expect('30 14 * * *', D(2026,3,1,14,30), D(2026,3,2,14,30))
+ expect('0 0 29 2 *', D(2026,1,1,0,0), D(2028,2,29,0,0))
+ 
+ # strictly after semantics with seconds
+-expect('* * * * *', D(2026,1,1,0,0,30), D(2026,1,1,0,2))
+-expect('* * * * *', D(2026,1,1,0,0,59), D(2026,1,1,0,2))
++expect('* * * * *', D(2026,1,1,0,0,30), D(2026,1,1,0,1))
++expect('* * * * *', D(2026,1,1,0,0,59), D(2026,1,1,0,1))
++expect('* * * * *', D(2026,1,1,0,1,1), D(2026,1,1,0,2))
+ expect('* * * * *', D(2026,1,1,23,59), D(2026,1,2,0,0))
+ expect('* * * * *', D(2026,12,31,23,59), D(2027,1,1,0,0))
+ 
+ # lists and ranges and steps
+
+[0m
+[0m← [0mEdit work/scratch_test_a2.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+@@ -41,10 +41,9 @@
+ expect('0 9-17 * * *', D(2026,3,1,18,0), D(2026,3,2,9,0))
+ 
+ # month / dom behavior
+ expect('0 0 1 1 *', D(2026,2,1), D(2027,1,1))
+-expect('0 12 31 4 *', D(2026,1,1)) if False else None
+-raises('0 12 31 4 *')  # April 31 never exists -> RuntimeError? NO: should it be ValueError?
++raises('0 12 31 4 *')  # April 31 never exists -> RuntimeError
+ print("note: 31 April -> RuntimeError expected")
+ 
+ # vixie OR-rule: dom restricted, dow restricted -> either matches
+ # 2026-03-02 is a Monday (dow=1); March 2 is dom=2
+
+[0m
+[0m← [0mEdit work/scratch_test_a2.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+@@ -56,11 +56,12 @@
+ expect('0 0 * * 0', D(2026,3,1,0,0), D(2026,3,1,0,0))          # Sunday Mar 1 2026
+ expect('0 0 * * 0', D(2026,3,2,0,0), D(2026,3,8,0,0))
+ expect('0 0 * * 6', D(2026,3,1,0,0), D(2026,3,7,0,0))          # Saturday
+ 
+-# dow boundary values 0..6; 7 rejected
++# dow boundary values 0..6 all accepted
+ for d in range(7):
+-    expect(('0 0 * * %d' % d) if True else '', D(2026,3,8,12,0), None) if False else None
++    next_after('0 0 * * %d' % d, D(2026,3,8,12,0))
++print("dow 0..6 all parse OK")
+ raises('0 0 * * 7')
+ raises('60 * * * *')
+ raises('* 24 * * *')
+ raises('* * 0 * *')
+
+[0m
+[0m← [0mEdit work/scratch_test_a2.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+@@ -81,10 +81,8 @@
+ raises('10-5 * * * *')    # inverted range
+ raises('1,,2 * * * *')
+ raises(',* * * * *')
+ raises('* * * * ')
+-if False:
+-    pass
+ try:
+     next_after(None, D(2026,1,1))
+     raise AssertionError("None expr should fail")
+ except ValueError:
+
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a2.py
+OK   * * * * * | 2026-01-01 00:00:00 -> 2026-01-01 00:01:00
+OK   30 14 * * * | 2026-03-01 13:00:00 -> 2026-03-01 14:30:00
+OK   30 14 * * * | 2026-03-01 14:30:00 -> 2026-03-02 14:30:00
+OK   0 0 29 2 * | 2026-01-01 00:00:00 -> 2028-02-29 00:00:00
+OK   * * * * * | 2026-01-01 00:00:30 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:00:59 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:01:01 -> 2026-01-01 00:02:00
+OK   * * * * * | 2026-01-01 23:59:00 -> 2026-01-02 00:00:00
+OK   * * * * * | 2026-12-31 23:59:00 -> 2027-01-01 00:00:00
+OK   5,15,45 * * * * | 2026-03-01 10:46:00 -> 2026-03-01 11:05:00
+OK   0-20/10 * * * * | 2026-03-01 10:21:00 -> 2026-03-01 11:00:00
+OK   */15 * * * * | 2026-03-01 10:16:00 -> 2026-03-01 10:30:00
+OK   55-59/5 23 31 12 * | 2026-01-01 00:00:00 -> 2026-12-31 23:55:00
+OK   0 9-17 * * * | 2026-03-01 18:00:00 -> 2026-03-02 09:00:00
+OK   0 0 1 1 * | 2026-02-01 00:00:00 -> 2027-01-01 00:00:00
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 15, in raises
+    next_after(expr, after)
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\tasks\A2-cronlite\cronlite.py", line 156, in next_after
+    raise RuntimeError(
+RuntimeError: no matching time for cron expression '0 12 31 4 *' within 4 years of 2026-01-01 00:00:00
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 45, in <module>
+    raises('0 12 31 4 *')  # April 31 never exists -> RuntimeError
+    ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 20, in raises
+    raise AssertionError("expected %s for %r, got %r" % (kind.__name__, expr, e))
+AssertionError: expected ValueError for '0 12 31 4 *', got RuntimeError("no matching time for cron expression '0 12 31 4 *' within 4 years of 2026-01-01 00:00:00")
+[0m
+[0m← [0mEdit work/scratch_test_a2.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+@@ -41,9 +41,9 @@
+ expect('0 9-17 * * *', D(2026,3,1,18,0), D(2026,3,2,9,0))
+ 
+ # month / dom behavior
+ expect('0 0 1 1 *', D(2026,2,1), D(2027,1,1))
+-raises('0 12 31 4 *')  # April 31 never exists -> RuntimeError
++raises('0 12 31 4 *', kind=RuntimeError)  # April 31 never exists -> RuntimeError
+ print("note: 31 April -> RuntimeError expected")
+ 
+ # vixie OR-rule: dom restricted, dow restricted -> either matches
+ # 2026-03-02 is a Monday (dow=1); March 2 is dom=2
+
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a2.py
+OK   * * * * * | 2026-01-01 00:00:00 -> 2026-01-01 00:01:00
+OK   30 14 * * * | 2026-03-01 13:00:00 -> 2026-03-01 14:30:00
+OK   30 14 * * * | 2026-03-01 14:30:00 -> 2026-03-02 14:30:00
+OK   0 0 29 2 * | 2026-01-01 00:00:00 -> 2028-02-29 00:00:00
+OK   * * * * * | 2026-01-01 00:00:30 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:00:59 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:01:01 -> 2026-01-01 00:02:00
+OK   * * * * * | 2026-01-01 23:59:00 -> 2026-01-02 00:00:00
+OK   * * * * * | 2026-12-31 23:59:00 -> 2027-01-01 00:00:00
+OK   5,15,45 * * * * | 2026-03-01 10:46:00 -> 2026-03-01 11:05:00
+OK   0-20/10 * * * * | 2026-03-01 10:21:00 -> 2026-03-01 11:00:00
+OK   */15 * * * * | 2026-03-01 10:16:00 -> 2026-03-01 10:30:00
+OK   55-59/5 23 31 12 * | 2026-01-01 00:00:00 -> 2026-12-31 23:55:00
+OK   0 9-17 * * * | 2026-03-01 18:00:00 -> 2026-03-02 09:00:00
+OK   0 0 1 1 * | 2026-02-01 00:00:00 -> 2027-01-01 00:00:00
+ERR  '0 12 31 4 *' -> RuntimeError (as expected)
+note: 31 April -> RuntimeError expected
+OK   0 0 2 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   0 0 3 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 52, in <module>
+    expect('0 0 4 * 1', D(2026,3,1,0,0), D(2026,3,4,0,0))          # dom matches Wed Mar4 though dow=3
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 10, in expect
+    assert got == want, "next_after(%r, %s) = %s, want %s" % (expr, after, got, want)
+           ^^^^^^^^^^^
+AssertionError: next_after('0 0 4 * 1', 2026-03-01 00:00:00) = 2026-03-02 00:00:00, want 2026-03-04 00:00:00
+[0m
+[0m← [0mEdit work/scratch_test_a2.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+@@ -48,9 +48,10 @@
+ # vixie OR-rule: dom restricted, dow restricted -> either matches
+ # 2026-03-02 is a Monday (dow=1); March 2 is dom=2
+ expect('0 0 2 * 1', D(2026,3,1,0,0), D(2026,3,2,0,0))          # both match (monday & dom2)
+ expect('0 0 3 * 1', D(2026,3,1,0,0), D(2026,3,2,0,0))          # dow matches Mon Mar2 even though dom!=3
+-expect('0 0 4 * 1', D(2026,3,1,0,0), D(2026,3,4,0,0))          # dom matches Wed Mar4 though dow=3
++expect('0 0 4 * 1', D(2026,3,1,0,0), D(2026,3,2,0,0))          # OR rule: Mon Mar2 wins first
++expect('0 0 4 * *', D(2026,3,1,0,0), D(2026,3,4,0,0))          # dom-only: Mar 4
+ # only dom restricted:
+ expect('0 0 5 * *', D(2026,3,1,0,0), D(2026,3,5,0,0))
+ # only dow restricted:
+ expect('0 0 * * 0', D(2026,3,1,0,0), D(2026,3,1,0,0))          # Sunday Mar 1 2026
+
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a2.py
+OK   * * * * * | 2026-01-01 00:00:00 -> 2026-01-01 00:01:00
+OK   30 14 * * * | 2026-03-01 13:00:00 -> 2026-03-01 14:30:00
+OK   30 14 * * * | 2026-03-01 14:30:00 -> 2026-03-02 14:30:00
+OK   0 0 29 2 * | 2026-01-01 00:00:00 -> 2028-02-29 00:00:00
+OK   * * * * * | 2026-01-01 00:00:30 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:00:59 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:01:01 -> 2026-01-01 00:02:00
+OK   * * * * * | 2026-01-01 23:59:00 -> 2026-01-02 00:00:00
+OK   * * * * * | 2026-12-31 23:59:00 -> 2027-01-01 00:00:00
+OK   5,15,45 * * * * | 2026-03-01 10:46:00 -> 2026-03-01 11:05:00
+OK   0-20/10 * * * * | 2026-03-01 10:21:00 -> 2026-03-01 11:00:00
+OK   */15 * * * * | 2026-03-01 10:16:00 -> 2026-03-01 10:30:00
+OK   55-59/5 23 31 12 * | 2026-01-01 00:00:00 -> 2026-12-31 23:55:00
+OK   0 9-17 * * * | 2026-03-01 18:00:00 -> 2026-03-02 09:00:00
+OK   0 0 1 1 * | 2026-02-01 00:00:00 -> 2027-01-01 00:00:00
+ERR  '0 12 31 4 *' -> RuntimeError (as expected)
+note: 31 April -> RuntimeError expected
+OK   0 0 2 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   0 0 3 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   0 0 4 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   0 0 4 * * | 2026-03-01 00:00:00 -> 2026-03-04 00:00:00
+OK   0 0 5 * * | 2026-03-01 00:00:00 -> 2026-03-05 00:00:00
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 57, in <module>
+    expect('0 0 * * 0', D(2026,3,1,0,0), D(2026,3,1,0,0))          # Sunday Mar 1 2026
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py", line 10, in expect
+    assert got == want, "next_after(%r, %s) = %s, want %s" % (expr, after, got, want)
+           ^^^^^^^^^^^
+AssertionError: next_after('0 0 * * 0', 2026-03-01 00:00:00) = 2026-03-08 00:00:00, want 2026-03-01 00:00:00
+[0m
+[0m← [0mEdit work/scratch_test_a2.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a2.py
+@@ -53,9 +53,9 @@
+ expect('0 0 4 * *', D(2026,3,1,0,0), D(2026,3,4,0,0))          # dom-only: Mar 4
+ # only dom restricted:
+ expect('0 0 5 * *', D(2026,3,1,0,0), D(2026,3,5,0,0))
+ # only dow restricted:
+-expect('0 0 * * 0', D(2026,3,1,0,0), D(2026,3,1,0,0))          # Sunday Mar 1 2026
++expect('0 0 * * 0', D(2026,3,1,0,1), D(2026,3,8,0,0))          # Sunday Mar 1 2026 (after it) -> next Sunday
+ expect('0 0 * * 0', D(2026,3,2,0,0), D(2026,3,8,0,0))
+ expect('0 0 * * 6', D(2026,3,1,0,0), D(2026,3,7,0,0))          # Saturday
+ 
+ # dow boundary values 0..6 all accepted
+
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a2.py
+OK   * * * * * | 2026-01-01 00:00:00 -> 2026-01-01 00:01:00
+OK   30 14 * * * | 2026-03-01 13:00:00 -> 2026-03-01 14:30:00
+OK   30 14 * * * | 2026-03-01 14:30:00 -> 2026-03-02 14:30:00
+OK   0 0 29 2 * | 2026-01-01 00:00:00 -> 2028-02-29 00:00:00
+OK   * * * * * | 2026-01-01 00:00:30 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:00:59 -> 2026-01-01 00:01:00
+OK   * * * * * | 2026-01-01 00:01:01 -> 2026-01-01 00:02:00
+OK   * * * * * | 2026-01-01 23:59:00 -> 2026-01-02 00:00:00
+OK   * * * * * | 2026-12-31 23:59:00 -> 2027-01-01 00:00:00
+OK   5,15,45 * * * * | 2026-03-01 10:46:00 -> 2026-03-01 11:05:00
+OK   0-20/10 * * * * | 2026-03-01 10:21:00 -> 2026-03-01 11:00:00
+OK   */15 * * * * | 2026-03-01 10:16:00 -> 2026-03-01 10:30:00
+OK   55-59/5 23 31 12 * | 2026-01-01 00:00:00 -> 2026-12-31 23:55:00
+OK   0 9-17 * * * | 2026-03-01 18:00:00 -> 2026-03-02 09:00:00
+OK   0 0 1 1 * | 2026-02-01 00:00:00 -> 2027-01-01 00:00:00
+ERR  '0 12 31 4 *' -> RuntimeError (as expected)
+note: 31 April -> RuntimeError expected
+OK   0 0 2 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   0 0 3 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   0 0 4 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   0 0 4 * * | 2026-03-01 00:00:00 -> 2026-03-04 00:00:00
+OK   0 0 5 * * | 2026-03-01 00:00:00 -> 2026-03-05 00:00:00
+OK   0 0 * * 0 | 2026-03-01 00:01:00 -> 2026-03-08 00:00:00
+OK   0 0 * * 0 | 2026-03-02 00:00:00 -> 2026-03-08 00:00:00
+OK   0 0 * * 6 | 2026-03-01 00:00:00 -> 2026-03-07 00:00:00
+dow 0..6 all parse OK
+ERR  '0 0 * * 7' -> ValueError (as expected)
+ERR  '60 * * * *' -> ValueError (as expected)
+ERR  '* 24 * * *' -> ValueError (as expected)
+ERR  '* * 0 * *' -> ValueError (as expected)
+ERR  '* * 32 * *' -> ValueError (as expected)
+ERR  '* * * 0 *' -> ValueError (as expected)
+ERR  '* * * 13 *' -> ValueError (as expected)
+ERR  '* * * * MON' -> ValueError (as expected)
+ERR  '* * * JAN *' -> ValueError (as expected)
+ERR  '' -> ValueError (as expected)
+ERR  '* * * *' -> ValueError (as expected)
+ERR  '* * * * * *' -> ValueError (as expected)
+ERR  '   ' -> ValueError (as expected)
+ERR  'a * * * *' -> ValueError (as expected)
+ERR  '* * * * *-1' -> ValueError (as expected)
+ERR  '5/2 * * * *' -> ValueError (as expected)
+ERR  '*/0 * * * *' -> ValueError (as expected)
+ERR  '10-5 * * * *' -> ValueError (as expected)
+ERR  '1,,2 * * * *' -> ValueError (as expected)
+ERR  ',* * * * *' -> ValueError (as expected)
+ERR  '* * * * ' -> ValueError (as expected)
+ERR  None expr -> ValueError (as expected)
+ERR  non-datetime after -> ValueError (as expected)
+ERR  Feb 30 -> RuntimeError (as expected)
+never-match scan took 0.000s
+OK   0 0 29 2 * | 2028-03-01 00:00:00 -> 2032-02-29 00:00:00
+OK   0 0 */2 * 1 | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   59 23 * * * | 2026-03-01 22:00:00 -> 2026-03-01 23:59:00
+OK   0 0 * * * | 2026-03-01 00:00:00 -> 2026-03-02 00:00:00
+OK   30 14 1 * * | 2026-03-01 14:30:00 -> 2026-04-01 14:30:00
+ALL CRONLITE SANITY CHECKS PASSED
+[0m
+[0m← [0mWrite work/tasks/A3-ttlcache/ttlcache.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/tasks/A4-tokenbucket/tokenbucket.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/scratch_test_a3_a4.py
+Wrote file successfully.
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a3_a4.py
+docstring example OK
+capacity validation OK
+ttl<=0 immediate expiry OK
+recency refresh on hit OK
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py", line 62, in <module>
+    assert sorted(k for k in ("a","b","cc","d") if p.contains(k)) == ["cc", "d"]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+[0m
+[0m← [0mEdit work/scratch_test_a3_a4.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py
+@@ -50,18 +50,27 @@
+ order_probe.put("d", 4)            # evict b
+ assert order_probe.contains("b") is False and order_probe.contains("a") is True
+ print("recency refresh on hit OK")
+ 
+-# expired-hit does NOT change recency
++# expired-hit does NOT change recency; misses don't either
+ p = TTLCache(3, ttl=10.0, clock=lambda: t[0])
+-p.put("a", 1); p.put("b", 2); p.put("cc", 3)
+-t[0] = 105.0                        # all still live (exp 110..115)
+-assert p.get("a") == 1              # a MRU; LRU=b
+-t[0] = 112.0                        # a expired (exp 110), b exp 112 dead boundary?, cc live(115)
+-assert p.get("a") is None           # expired hit, no recency change
+-p.put("d", 4)                       # purge dead a,b then insert d -> within capacity
+-assert sorted(k for k in ("a","b","cc","d") if p.contains(k)) == ["cc", "d"]
+-print("expired hit no recency change OK")
++t[0] = 400.0
++p.put("a", 1)                       # exp 410, LRU
++t[0] = 401.0
++p.put("b", 2)                       # exp 411
++t[0] = 402.0
++p.put("cc", 3)                      # exp 412, MRU ; order a,b,cc
++t[0] = 405.0
++assert p.get("nope") is None        # pure miss: no recency change
++assert p.get("a") == 1              # hit: a -> MRU ; order b,cc,a
++t[0] = 410.5                        # a expired (exp 410); b,cc live
++assert p.get("a") is None           # expired hit
++p.put("d", 4)                       # purges dead a; inserts d -> fits (3 live: b,cc,d)
++assert sorted(k for k in ("a", "b", "cc", "d") if p.contains(k)) == ["b", "cc", "d"]
++t[0] = 410.7
++p.put("e", 5)                       # evicts LRU among live = b (NOT cc/a)
++assert sorted(k for k in ("a", "b", "cc", "d", "e") if p.contains(k)) == ["cc", "d", "e"]
++print("expired/miss no recency change OK")
+ 
+ # boundary: at exactly expiry time the entry is dead
+ q = TTLCache(2, ttl=10.0, clock=lambda: t[0])
+ t[0] = 50.0
+
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a3_a4.py
+docstring example OK
+capacity validation OK
+ttl<=0 immediate expiry OK
+recency refresh on hit OK
+expired/miss no recency change OK
+expiry boundary OK
+put resets value+ttl OK
+purge count OK
+eviction among live only OK
+contains no-recency OK
+default clock OK
+update->MRU OK
+docstring example OK
+validation OK
+edge consumes OK
+Traceback (most recent call last):
+  File "C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py", line 195, in <module>
+    assert b3.try_consume(0.75) is True
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError
+[0m
+[0m← [0mEdit work/scratch_test_a3_a4.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\A-tdd-rigorous\work\scratch_test_a3_a4.py
+@@ -191,10 +191,12 @@
+ b3.try_consume(1.5)
+ assert b3.available() == 0.0
+ tt[0] = 104.0
+ assert b3.available() == 0.5
++tt[0] = 106.0                       # +1.0 -> 1.5 total
++assert abs(b3.available() - 1.5) < 1e-12
+ assert b3.try_consume(0.75) is True
+-assert b3.available() == 0.25 - 0.0 or abs(b3.available() - (0.25)) < 1e-12
++assert abs(b3.available() - 0.75) < 1e-12
+ print("fractional OK")
+ 
+ # refill applies even when consume fails ("lazy refill still applies")
+ tt[0] = 500.0
+
+[0m
+[0m$ [0m$env:PYTHONIOENCODING='utf-8'; python work\scratch_test_a3_a4.py
+docstring example OK
+capacity validation OK
+ttl<=0 immediate expiry OK
+recency refresh on hit OK
+expired/miss no recency change OK
+expiry boundary OK
+put resets value+ttl OK
+purge count OK
+eviction among live only OK
+contains no-recency OK
+default clock OK
+update->MRU OK
+docstring example OK
+validation OK
+edge consumes OK
+fractional OK
+failed-consume refill OK
+ALL TTL/TOKENBUCKET SANITY CHECKS PASSED
+[0m

@@ -1,0 +1,14 @@
+Now let me set up a todo list and start implementing.
+**A1 jsonlite** — writing a strict recursive-descent JSON parser:
+Now a scratch sanity test for jsonlite:
+That failure is a bug in my scratch test (the placeholder line was malformed input). Fixing the scratch test:
+Console encoding issue only (cp1252 can't print emoji). Re-running with UTF-8:
+A1 complete. **A2 cronlite** next:
+Now the cronlite sanity test:
+My test expectation was wrong there (00:01:00 IS strictly after 00:00:30). Fixing the scratch test:
+Test bug — that case should expect RuntimeError. Fixing:
+The implementation is right (OR-rule: Mon Mar 2 matches via DOW before Mar 4); my test expectation was wrong. Fixing:
+Correct behavior again (strictly-after excludes Sunday Mar 1 00:00 itself); test expectation wrong. Fixing:
+A2 done. **A3 ttlcache** and **A4 tokenbucket** now:
+Test-scenario math error on my side (all entries inserted at the same instant share the same expiry). Rewriting that section properly:
+Again my test's arithmetic (only 0.5 tokens available, tried consuming 0.75). Fixing:
