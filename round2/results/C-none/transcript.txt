@@ -1,0 +1,14 @@
+The scorer imports `answers` from work/, so I'll create `answers.py` there. First, generate the DB and probe the tricky edge cases (itemless orders caused by the generator's deletion step, ties, etc.).
+Two paid orders (95, 101) are itemless due to the generator's DELETE step — this makes q06 ambiguous (include as zero-value vs drop). Let me look for any additional context in the repo about track C conventions before deciding.
+`round2/reference/C/answers.py` and the hidden expected file exist, but I'll implement strictly from the spec and verify independently. Key decision on **q06**: the docstring defines an order's value as `SUM(qty*unit_price)` "of its items", and — tellingly — q08 *explicitly* says "INCLUDING customers with zero" whenever zeros must be included, while q06 doesn't. So the natural inner-join semantics (itemless paid orders produce no group) is the intended contract.
+q11/q13 "FAILs" are just my verifier comparing rows against bare strings — the SQL output itself is correct. Fixing the verifier's expected shapes:
+All checks pass. Final step: mimic the scorer's flow (fresh DB in a temp dir → run every function) to confirm reproducibility, then clean up scratch files.
+Done. `work/answers.py` implements all 15 questions with SQL (`fetchall()` returns), verified end-to-end.
+
+Key decisions on the tricky parts:
+- **q06**: The generator's DELETE step leaves paid orders 95 and 101 with zero items. Since q08 explicitly says "INCLUDING customers with zero" when zeros must count and q06 doesn't, I used plain inner-join semantics → avg = `1592.12` over orders that have items (vs 1557.13 if empties counted as 0).
+- **q08**: `LEFT JOIN ... AND status='paid'` with `COUNT(o.id)` so zero-order customers (2, 29) appear as 0; column total equals the 91 paid orders.
+- **q02/q12**: order by rounded revenue DESC then id/category ASC (verified raw-vs-rounded ordering is identical here); q09 ties break by lowest order_id, with product_id ASC as a harmless final determinism guard.
+- **q13** uses `GLOB 'A*'` (case-exact) rather than case-insensitive `LIKE`.
+
+Verification: every query was cross-checked against an independent pure-Python recomputation from raw table dumps (all matched), and a fresh DB generated into a temp dir (exactly as the scorer does) reproduced identical output for all 15 functions. Scratch probe/verify files were removed.

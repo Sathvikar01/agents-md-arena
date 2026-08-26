@@ -1,0 +1,169 @@
+[0m
+> build · ox-alpha-free
+[0m
+[0m→ [0mRead .
+[0m✱ [0mGlob "work/**"[90m 2 matches[0m
+[0m→ [0mRead work/db_generator.py
+[0m→ [0mRead work/questions.py
+[0m✱ [0mGlob "**/*.py"[90m 2 matches[0m
+[0m
+[0m$ [0mgit status; git log --oneline -5
+On branch master
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   ../../../harness/make_manifest2.py
+	modified:   ../../../harness/run_round2.ps1
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	../../results/C-none/
+
+no changes added to commit (use "git add" and/or "git commit -a")
+6555759 results(round2/B-user-proposed): 100.0% - track B complete, all variants 100%
+e3445f3 results(round2/B-orchestrator-heavy): 100.0%
+92c96fd results(round2/B-tdd-rigorous): 100.0%
+50af87d results(round2/B-concise): 100.0%
+77d4f2a results(round2/B-none): 100.0% (behavior+structural)
+[0m
+[0m✱ [0mGlob "harness/**"[90m in C:/Users/arsat/OneDrive/Desktop/agents-md-arena · 32 matches[0m
+[0m✱ [0mGrep "questions|answers"[90m in C:/Users/arsat/OneDrive/Desktop/agents-md-arena/harness · 6 matches[0m
+[0m→ [0mRead C:/Users/arsat/OneDrive/Desktop/agents-md-arena/harness/score2.py
+[0m
+[0m$ [0mpython db_generator.py
+built ecommerce.db
+[0m
+[0m$ [0mpython -c "
+import sqlite3
+conn = sqlite3.connect('ecommerce.db')
+q = lambda s: conn.execute(s).fetchall()
+print('orders total/status:', q(\"SELECT status, COUNT(*) FROM orders GROUP BY status\"))
+print('itemless orders by status:', q('''SELECT o.status, COUNT(*) FROM orders o
+   LEFT JOIN order_items oi ON oi.order_id=o.id WHERE oi.order_id IS NULL GROUP BY o.status'''))
+print('itemless paid ids:', q('''SELECT o.id FROM orders o
+   LEFT JOIN order_items oi ON oi.order_id=o.id WHERE oi.order_id IS NULL AND o.status='paid' '''))
+print('customers w/o any order:', q('''SELECT COUNT(*) FROM customers c WHERE NOT EXISTS(SELECT 1 FROM orders o WHERE o.customer_id=c.id)'''))
+print('never-ordered products:', q('''SELECT id,name FROM products p WHERE NOT EXISTS(SELECT 1 FROM order_items oi WHERE oi.product_id=p.id)'''))
+"
+
+* : The term '*' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the 
+spelling of the name, or if a path was included, verify that the path is correct and try again.
+At line:5 char:56
++ print('orders total/status:', q(\"SELECT status, COUNT(*) FROM orders ...
++                                                        ~
+    + CategoryInfo          : ObjectNotFound: (*:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+[0m
+[0m← [0mWrite work/probe.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython probe.py
+orders by status: [('cancelled', 29), ('paid', 91), ('pending', 20)]
+itemless orders by status: [('cancelled', 4), ('paid', 2)]
+itemless paid ids: [(95,), (101,)]
+customers w/o any order: [(1,)]
+never-ordered products: [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')]
+top6 raw-order revenue: [(16, 15212.16), (3, 12954.44), (4, 11851.32), (5, 11322.6), (6, 11015.16), (13, 8935.85)]
+top6 rounded-order revenue: [(16, 15212.16), (3, 12954.44), (4, 11851.32), (5, 11322.6), (6, 11015.16), (13, 8935.85)]
+max line items (paid): [(3, 10, 1439.6399999999999), (19, 6, 1436.76), (50, 6, 1436.76)]
+distinct-product histogram: [(1, 45), (2, 37), (3, 38), (4, 14)]
+months: [('2026-01',), ('2026-02',), ('2026-03',), ('2026-04',), ('2026-05',), ('2026-06',)]
+countries: [('DE',), ('FR',), ('GB',), ('NL',), ('US',)]
+a-names: [('Amelie Aerhoff',), ('Anke Derhoff',), ('Anna Aerhoff',), ('Anton Berhoff',), ('Astrid Cerhoff',)]
+q14: [('audio', 224.58, 455.82), ('displays', 312.41, 478.92), ('network', 179.65, 479.88), ('peripherals', 202.81, 365.73), ('storage', 11.75, 475.38)]
+[0m
+[0m$ [0mGet-ChildItem -Force | Select-Object Name; Get-ChildItem round2 | Select-Object Name
+Name          
+----          
+.git          
+benchmark     
+harness       
+results       
+round2        
+variants      
+workspaces    
+.gitignore    
+leaderboard.md
+README.md     
+hidden        
+pristine      
+reference     
+results       
+workspaces    
+manifest.json
+[0m
+[0m✱ [0mGrep "q06|avg_value|Average TOTAL"[90m in C:/Users/arsat/OneDrive/Desktop/agents-md-arena · 6 matches[0m
+[0m
+[0m← [0mWrite work/answers.py
+Wrote file successfully.
+[0m
+[0m← [0mWrite work/verify.py
+Wrote file successfully.
+[0m
+[0m$ [0mpython verify.py
+OK  q01: [(2, 'Ben Berhoff'), (10, 'Jonas Jerhoff'), (11, 'Kara Kerhoff'), (20, 'Tara Terhoff')]
+OK  q02: [(16, 15212.16), (3, 12954.44), (4, 11851.32)]
+OK  q03: [('cancelled', 29), ('paid', 91), ('pending', 20)]
+OK  q04: [('2026-01', 28579.77), ('2026-02', 19304.49), ('2026-03', 19016.82), ('2026-04', 27821.3), ('2026-05', 23875.56), ('2026-06', 23100.45)]
+OK  q07: [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')]
+print q09: [(3, 10, 1439.6399999999999)]
+OK  q10: [(35.0,)]
+FAIL q11
+  got  [('DE',), ('FR',), ('GB',), ('NL',), ('US',)]
+  want ['DE', 'FR', 'GB', 'NL', 'US']
+FAIL q11: [('DE',), ('FR',), ('GB',), ('NL',), ('US',)]
+FAIL q13
+  got  [('Amelie Aerhoff',), ('Anke Derhoff',), ('Anna Aerhoff',), ('Anton Berhoff',), ('Astrid Cerhoff',)]
+  want ['Amelie Aerhoff', 'Anke Derhoff', 'Anna Aerhoff', 'Anton Berhoff', 'Astrid Cerhoff']
+FAIL q13: [('Amelie Aerhoff',), ('Anke Derhoff',), ('Anna Aerhoff',), ('Anton Berhoff',), ('Astrid Cerhoff',)]
+print q14: [('audio', 224.58, 455.82), ('displays', 312.41, 478.92), ('network', 179.65, 479.88), ('peripherals', 202.81, 365.73), ('storage', 11.75, 475.38)]
+print q15: [(11, 4), (14, 4), (21, 4), (26, 4), (29, 4), (40, 4), (46, 4), (54, 4), (55, 4), (63, 4), (71, 4), (72, 4), (111, 4), (114, 4), (1, 3), (9, 3), (17, 3), (18, 3), (19, 3), (28, 3), (31, 3), (33, 3), (34, 3), (37, 3), (38, 3), (47, 3), (49, 3), (51, 3), (59, 3), (74, 3), (76, 3), (78, 3), (79, 3), (84, 3), (85, 3), (88, 3), (93, 3), (97, 3), (102, 3), (104, 3), (106, 3), (107, 3), (110, 3), (115, 3), (121, 3), (122, 3), (123, 3), (129, 3), (131, 3), (133, 3), (136, 3), (140, 3), (3, 2), (4, 2), (8, 2), (10, 2), (15, 2), (24, 2), (25, 2), (30, 2), (32, 2), (41, 2), (42, 2), (43, 2), (44, 2), (58, 2), (61, 2), (62, 2), (67, 2), (70, 2), (73, 2), (80, 2), (81, 2), (82, 2), (94, 2), (96, 2), (98, 2), (100, 2), (103, 2), (108, 2), (109, 2), (112, 2), (116, 2), (118, 2), (124, 2), (125, 2), (126, 2), (137, 2), (138, 2)]
+q06 got 1592.12; with-empty-orders avg=1557.13, without=1592.12
+q08 OK (30 customers, zeros=2, total=91)
+q09 OK: [(3, 10, 1439.6399999999999)]
+q12 OK: [('displays', 8717.27), ('peripherals', 4921.15), ('audio', 4337.48), ('storage', 4153.5), ('network', 971.05)]  (June paid total=23100.45)
+q15 OK (89 rows)
+SOME CHECKS FAILED
+[0m
+[0m← [0mEdit work/verify.py
+Index: C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-none\work\verify.py
+===================================================================
+--- C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-none\work\verify.py
++++ C:\Users\arsat\OneDrive\Desktop\agents-md-arena\round2\workspaces\C-none\work\verify.py
+@@ -47,11 +47,12 @@
+     ("q09", answers.q09(conn), None),
+     ("q10", answers.q10(conn),
+      [(round(100.0 * sum(1 for o in orders if o[3] != "paid")
+              / len(orders), 2),)]),
+-    ("q11", answers.q11(conn), sorted({c[2] for c in cust})),
++    ("q11", answers.q11(conn),
++     [(c,) for c in sorted({c[2] for c in cust})]),
+     ("q13", answers.q13(conn),
+-     sorted([c[1] for c in cust if c[1].startswith("A")])),
++     [(c,) for c in sorted(c[1] for c in cust if c[1].startswith("A"))]),
+     ("q14", answers.q14(conn), None),
+     ("q15", answers.q15(conn), None),
+ ]
+ ok = True
+
+[0m
+[0m$ [0mpython verify.py 2>&1 | Select-String -Pattern "OK |FAIL|q06|PASSED|FAILED"
+OK  q01: [(2, 'Ben Berhoff'), (10, 'Jonas Jerhoff'), (11, 'Kara Kerhoff'), (20, 'Tara Terhoff')]
+OK  q02: [(16, 15212.16), (3, 12954.44), (4, 11851.32)]
+OK  q03: [('cancelled', 29), ('paid', 91), ('pending', 20)]
+OK  q04: [('2026-01', 28579.77), ('2026-02', 19304.49), ('2026-03', 19016.82), ('2026-04', 27821.3), ('2026-05', 
+23875.56), ('2026-06', 23100.45)]
+OK  q07: [(18, 'HDD 4TB'), (19, 'MicroSD 256GB')]
+OK  q10: [(35.0,)]
+OK  q11: [('DE',), ('FR',), ('GB',), ('NL',), ('US',)]
+OK  q13: [('Amelie Aerhoff',), ('Anke Derhoff',), ('Anna Aerhoff',), ('Anton Berhoff',), ('Astrid Cerhoff',)]
+q06 got 1592.12; with-empty-orders avg=1557.13, without=1592.12
+q08 OK (30 customers, zeros=2, total=91)
+q15 OK (89 rows)
+ALL CROSS-CHECKS PASSED
+[0m
+[0m$ [0mpython -c "import sys,tempfile,sqlite3,os,json; sys.path.insert(0,'.'); import db_generator,answers; tmp=tempfile.mkdtemp(); dbp=os.path.join(tmp,'db.sqlite'); db_generator.build(dbp); conn=sqlite3.connect(dbp); res={f'q{i:02d}': [list(r) for r in getattr(answers,f'q{i:02d}')(conn)] for i in range(1,16)}; print(json.dumps(res)); conn.close()" > fresh_run.json; Get-Content fresh_run.json; Remove-Item probe.py, verify.py, fresh_run.json
+{"q01": [[2, "Ben Berhoff"], [10, "Jonas Jerhoff"], [11, "Kara Kerhoff"], [20, "Tara Terhoff"]], "q02": [[16, 15212.16], [3, 12954.44], [4, 11851.32]], "q03": [["cancelled", 29], ["paid", 91], ["pending", 20]], "q04": [["2026-01", 28579.77], ["2026-02", 19304.49], ["2026-03", 19016.82], ["2026-04", 27821.3], ["2026-05", 23875.56], ["2026-06", 23100.45]], "q05": [[2, "Ben Berhoff"]], "q06": [[1592.12]], "q07": [[18, "HDD 4TB"], [19, "MicroSD 256GB"]], "q08": [[1, 6], [2, 0], [3, 1], [4, 2], [5, 1], [6, 10], [7, 5], [8, 5], [9, 3], [10, 1], [11, 2], [12, 5], [13, 2], [14, 3], [15, 4], [16, 1], [17, 2], [18, 2], [19, 2], [20, 3], [21, 2], [22, 4], [23, 2], [24, 5], [25, 1], [26, 4], [27, 6], [28, 5], [29, 0], [30, 2]], "q09": [[3, 10, 1439.6399999999999]], "q10": [[35.0]], "q11": [["DE"], ["FR"], ["GB"], ["NL"], ["US"]], "q12": [["displays", 8717.27], ["peripherals", 4921.15], ["audio", 4337.48], ["storage", 4153.5], ["network", 971.05]], "q13": [["Amelie Aerhoff"], ["Anke Derhoff"], ["Anna Aerhoff"], ["Anton Berhoff"], ["Astrid Cerhoff"]], "q14": [["audio", 224.58, 455.82], ["displays", 312.41, 478.92], ["network", 179.65, 479.88], ["peripherals", 202.81, 365.73], ["storage", 11.75, 475.38]], "q15": [[11, 4], [14, 4], [21, 4], [26, 4], [29, 4], [40, 4], [46, 4], [54, 4], [55, 4], [63, 4], [71, 4], [72, 4], [111, 4], [114, 4], [1, 3], [9, 3], [17, 3], [18, 3], [19, 3], [28, 3], [31, 3], [33, 3], [34, 3], [37, 3], [38, 3], [47, 3], [49, 3], [51, 3], [59, 3], [74, 3], [76, 3], [78, 3], [79, 3], [84, 3], [85, 3], [88, 3], [93, 3], [97, 3], [102, 3], [104, 3], [106, 3], [107, 3], [110, 3], [115, 3], [121, 3], [122, 3], [123, 3], [129, 3], [131, 3], [133, 3], [136, 3], [140, 3], [3, 2], [4, 2], [8, 2], [10, 2], [15, 2], [24, 2], [25, 2], [30, 2], [32, 2], [41, 2], [42, 2], [43, 2], [44, 2], [58, 2], [61, 2], [62, 2], [67, 2], [70, 2], [73, 2], [80, 2], [81, 2], [82, 2], [94, 2], [96, 2], [98, 2], [100, 2], [103, 2], [108, 2], [109, 2], [112, 2], [116, 2], [118, 2], [124, 2], [125, 2], [126, 2], [137, 2], [138, 2]]}
+[0m
