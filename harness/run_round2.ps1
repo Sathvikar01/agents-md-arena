@@ -27,15 +27,35 @@ New-Item -ItemType Directory -Force -Path $ws | Out-Null
 Copy-Item -Recurse $src (Join-Path $ws "work")
 if (-not (Test-Path (Join-Path $ws "work"))) { throw "workspace copy failed" }
 
-# ---- isolated global config ---------------------------------------------------
-$cfg = Join-Path $ws ".isolated-config"
+# make the workspace its own git repo so the child's project root is local
+git -C (Join-Path $ws "work") init -q 2>$null
+git -C (Join-Path $ws "work") add -A 2>$null
+git -C (Join-Path $ws "work") -c user.name=harness -c user.email=harness@local `
+    commit -q -m baseline 2>$null
+
+# ---- isolated global config (kept under results/, outside agent view) --------
+New-Item -ItemType Directory -Force -Path $res | Out-Null
+$cfg = Join-Path $res ".isolated-config"
 New-Item -ItemType Directory -Force -Path (Join-Path $cfg "opencode") | Out-Null
 $variantFile = Join-Path $repo "variants\$Variant.md"
 if ($Variant -ne "none") {
     if (-not (Test-Path $variantFile)) { throw "variant file not found: $variantFile" }
     Copy-Item $variantFile (Join-Path $cfg "opencode\AGENTS.md")
 }
-New-Item -ItemType Directory -Force -Path $res | Out-Null
+# headless runs cannot answer permission prompts -> allow everything
+@'
+{
+  "permission": {
+    "edit": "allow",
+    "bash": "allow",
+    "webfetch": "allow",
+    "external_directory": "allow"
+  }
+}
+'@ | Set-Content -Encoding utf8 (Join-Path $cfg "opencode\opencode.jsonc")
+if (-not (Test-Path (Join-Path $cfg "opencode\opencode.jsonc"))) {
+    throw "isolated config write failed"
+}
 
 $promptA = @'
 You are working in the work/ directory of this repository. Under work/tasks/<id>/ you will find SPEC.md contracts plus Python stub modules. Implement every spec completely and exactly: grading uses hidden, exhaustive test suites that you cannot see, written directly from these specs. Use only the Python standard library. Keep every public signature unchanged. Write your own quick sanity checks in scratch files if useful (they will not be graded), but your priority is precise conformance to every documented behavior and edge case. Before finishing, re-read each SPEC.md line by line and verify your implementation against every stated rule.
