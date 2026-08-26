@@ -1,0 +1,16 @@
+I've reviewed the workspace: `work/db_generator.py` (deterministic DB builder) and `work/questions.py` (the stub functions — the task refers to this content as `answers.py`, which I'll create). Following the orchestration protocol: recon is done (tiny repo, both files fully read). Now planning and executing.
+PowerShell quoting issue — I'll use a script file instead.
+DB built: 30 customers, 19 products, 140 orders (91 paid / 20 pending / 29 cancelled), 302 items, months 2026-01→2026-06. Now implementing `answers.py` with exact semantics from each docstring.
+Now a sanity-check script with independent cross-checks:
+All sanity checks pass (counts, alternate query formulations, tie situations). Per protocol Phase 3+4, spawning two parallel verification agents: a **red-team semantics reviewer** and an **independent tester** that rebuilds expected results in pure Python (non-SQL oracle) to catch subtle mistakes.
+Both agents report **15/15 PASS**, no blockers. The one flagged judgment call (q06's two item-less paid orders, ids 95/101) resolves in favor of the current implementation: the docstring defines an order's value as the SUM over *its items*, and the canonical SQL formulation (per-order subquery + AVG, which skips NULLs) yields the same 1592.12 — only a deliberate `COALESCE(...,0)` would change it, which neither the contract nor convention supports. No changes needed.
+
+Phase 5 — integration & acceptance: fresh regeneration + full end-to-end rerun, then cleanup of temp files.
+Identical results after regeneration — deterministic and stable. Cleaning up temp artifacts:
+Done. `work/answers.py` implements all 15 functions as pure SQL via `conn.execute(...).fetchall()`.
+
+**What was done & evidence**
+- Generated `ecommerce.db` (30 customers, 19 products, 140 orders, 302 items); regeneration is byte-stable and results were identical on rerun.
+- Key semantics handled: paid-only filters (q02/q04/q06/q09/q12), June-2026 boundary (`strftime '%Y-%m' = '2026-06'`), `COUNT(o.id)` with paid-condition in the LEFT JOIN ON clause so zero-paid customers appear (q08: ids 2, 29 → 0), `COUNT(DISTINCT product_id)` for q15 (13 orders have duplicate same-product lines), raw unrounded line value + lowest-order_id tiebreak for q09, single-row tuples for q06/q10.
+- Verified three ways: sanity script with alternate SQL formulations (all match), a red-team review agent (0 blockers; the one flagged item — q06's two item-less paid orders — confirmed correct per contract since AVG skips their NULL sums → 1592.12), and an independent pure-Python oracle agent (15/15 exact pass, no rounding-midpoint or tie edge cases triggered).
+- Temp test scripts removed; final state: `answers.py`, `questions.py`, `db_generator.py`, `ecommerce.db`.
